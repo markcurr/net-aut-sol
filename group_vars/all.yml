@@ -1,0 +1,13 @@
+---
+ansible_user: ansible
+ansible_ssh_pass: ansible
+ansible_device_os: ios
+cli:
+  username:  "ansible"
+  password:  "ansible"
+  host:      "{{inventory_hostname}}"
+nxos_provider:
+  username: "ansible"
+  password: "ansible"
+  host: "{{ inventory_hostname }}"
+  transport: cli

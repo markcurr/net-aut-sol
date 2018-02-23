@@ -1,0 +1,22 @@
+---
+
+
+- hosts: all
+  connection: local
+  gather_facts: no
+  tasks:
+  - ios_config:
+      lines:
+        - ip ospf 1 area 0
+      provider: "{{ cli }}"
+      parents: interface gi0/1
+  - ios_config:
+      lines:
+        - ip ospf 1 area 0
+      provider: "{{ cli }}"
+      parents: interface gi0/2
+  - ios_config:
+      lines:
+        - ip ospf 1 area 0
+      provider: "{{ cli }}"
+      parents: interface loopback0

@@ -1,0 +1,11 @@
+---
+
+
+- hosts: all
+  connection: local
+  gather_facts: no
+  tasks:
+  - ios_command:
+      commands:
+        - show ip int br
+      provider: "{{ cli }}"

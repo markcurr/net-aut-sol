@@ -1,0 +1,14 @@
+---
+
+
+- hosts: all
+  connection: local
+  gather_facts: False
+  tasks:
+  - ios_facts: 
+      provider: "{{cli}}"
+      gather_subset: interfaces
+    register: facts
+  - debug: var=vars
+  - debug: var=facts
+
