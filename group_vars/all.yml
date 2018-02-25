@@ -10,4 +10,3 @@ nxos_provider:
   username: "ansible"
   password: "ansible"
   host: "{{ inventory_hostname }}"
-  transport: cli

@@ -1,0 +1,27 @@
+---
+
+- name: configure interfaces
+  hosts: nxos
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: set interface to L3 and admin up
+      nxos_interface:
+        admin_state: up
+        interface: "{{ item.key }}"
+        mode: layer3
+        state: present
+        provider: "{{ nxos_provider }}"
+      with_dict: "{{ interfaces }}"
+      
+    - name: configure interface IP
+      nxos_ip_interface:
+        interface: "{{ item.key }}"
+        addr: "{{ item.value.ip }}"
+        mask: "{{ item.value.mask }}"
+        provider: "{{ nxos_provider }}"
+      with_dict: "{{ interfaces }}"
+
+
+

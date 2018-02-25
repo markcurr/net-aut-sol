@@ -1,0 +1,48 @@
+---
+
+- name: check Features
+  hosts: nxos
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+
+    #license grace-period
+    - name: enable NXAPI
+      nxos_config:
+        lines:
+          - 'feature nxapi'
+        provider: "{{ nxos_provider }}"
+        transport: cli
+
+
+    #check ospf feature
+    - name: enable feature OSPF
+      nxos_feature:
+        state: enabled
+        feature: ospf
+        provider: "{{ nxos_provider }}"
+
+    #check SVI feature
+    - name: enable feature SVI
+      nxos_feature:
+        state: enabled
+        feature: interface-vlan
+        provider: "{{ nxos_provider }}"
+
+    #check hsrp feature
+    - name: enable feature HSRP
+      nxos_feature:
+        state: enabled
+        feature: hsrp
+        provider: "{{ nxos_provider }}"
+
+    #check vpc feature
+    - name: enable feature VPC
+      nxos_feature:
+        state: enabled
+        feature: vpc
+        provider: "{{ nxos_provider }}"
+
+       
