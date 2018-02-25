@@ -4,28 +4,14 @@
   connection: local
   gather_facts: no
   tasks:
-  - name: Configure OSPF on Gi01
+  - name: Configure OSPF on interface
     ios_config:
       lines:
-        - ip address {{GigabitEthernet01.ip}} {{GigabitEthernet01.netmask}}
+        - ip address {{item.value.ip}} {{item.value.netmask}}
         - ip ospf 1 area 0
         - ip ospf network point-to-point
         - no shutdown
       provider: "{{ cli }}"
-      parents: interface GigabitEthernet0/1
-  - name: Configure OSPF on Gi02
-    ios_config:
-      lines:
-        - ip address {{GigabitEthernet02.ip}} {{GigabitEthernet02.netmask}}
-        - ip ospf 1 area 0
-        - ip ospf network point-to-point
-        - no shutdown
-      provider: "{{ cli }}"
-      parents: interface GigabitEthernet0/2
-  - name: Configure OSPF on Loopback0
-    ios_config:
-      lines:
-        - ip address {{Loopback0.ip}} {{Loopback0.netmask}}
-        - ip ospf 1 area 0
-      provider: "{{ cli }}"
-      parents: interface Loopback0
+      parents: interface {{item.key}}
+    with_dict: "{{ interfaces }}"
+
