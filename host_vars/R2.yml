@@ -11,3 +11,4 @@ interfaces:
   Loopback0:
    ip: 2.2.2.2
    netmask: 255.255.255.255
+   loopback: True
