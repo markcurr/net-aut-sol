@@ -9,6 +9,6 @@ interfaces:
     mask: 24
    
    Loopback0:
-    ip: 1.1.1.1
+    ip: 2.2.2.2
     mask: 32
     loopback: True

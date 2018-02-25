@@ -13,6 +13,7 @@
         mode: layer3
         state: present
         provider: "{{ nxos_provider }}"
+        timeout: 30
       with_dict: "{{ interfaces }}"
       
     - name: configure interface IP
@@ -21,6 +22,7 @@
         addr: "{{ item.value.ip }}"
         mask: "{{ item.value.mask }}"
         provider: "{{ nxos_provider }}"
+        timeout: 30
       with_dict: "{{ interfaces }}"
 
 
