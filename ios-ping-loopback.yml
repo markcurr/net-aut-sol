@@ -1,6 +1,6 @@
 ---
 
-- hosts: R1
+- hosts: all
   connection: local
   gather_facts: no
   tasks:
@@ -8,5 +8,9 @@
   - name: Test reachability to loopbacks
     ios_ping:
       provider: "{{ cli }}"
-      dest: 1.1.1.1
-      source: loopback0
+      dest: "{{ item }}"
+    with_items:
+      - 1.1.1.1
+      - 2.2.2.2
+      - 3.3.3.3
+      - 4.4.4.4

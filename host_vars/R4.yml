@@ -1,0 +1,12 @@
+---
+GigabitEthernet01:
+ ip: 10.10.14.4
+ netmask: 255.255.255.0
+ 
+GigabitEthernet02:
+ ip: 10.10.24.4
+ netmask: 255.255.255.0
+ 
+Loopback0:
+ ip: 4.4.4.4
+ netmask: 255.255.255.255
