@@ -38,11 +38,11 @@
         feature: hsrp
         provider: "{{ nxos_provider }}"
 
-    #check vpc feature
-    - name: enable feature VPC
+    #check nv overlay feature
+    - name: enable feature nv overlay
       nxos_feature:
         state: enabled
-        feature: vpc
+        feature: nv overlay
         provider: "{{ nxos_provider }}"
 
        
