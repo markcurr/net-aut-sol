@@ -16,7 +16,7 @@ My lab is composed of an ESXi server hosting the following VMs:
   
 Nexus 9000v VMs are connected in a leaf-spine topology
 |Device|Link|Link|Device|
-|:--:|:--:|:--:|:--:|
+|:---:|:---:|:---:|:---:|
 |N9K1|E1/1|E1/1|N9K3|
 |N9K1|E1/2|E1/1|N9K4|
 |N9K2|E1/1|E1/2|N9K3|
