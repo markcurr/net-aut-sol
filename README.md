@@ -3,7 +3,7 @@
 My lab is composed of an ESXi server hosting the following VMs:
 
 | VM		| IP                |
-| ----------|:-----------------:| 
+|:---------:|:-----------------:| 
 | ansible	|	192.168.0.60    |
 | R1		|	192.168.0.201   |
 | R2		|	192.168.0.202   |
