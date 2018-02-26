@@ -39,9 +39,9 @@
         provider: "{{ nxos_provider }}"
 
     #check nv overlay feature
-    - name: disable feature nv overlay
+    - name: enable feature nv overlay
       nxos_feature:
-        state: disabled
+        state: enabled
         feature: nv overlay
         provider: "{{ nxos_provider }}"
 
