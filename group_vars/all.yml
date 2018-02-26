@@ -11,3 +11,4 @@ nxos_provider:
   password: "ansible"
   host: "{{ inventory_hostname }}"
   transport: nxapi
+  timeout: 30
