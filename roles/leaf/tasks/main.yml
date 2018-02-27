@@ -30,3 +30,9 @@
   nxos_vlan:
     vlan_id: 50
     mapped_vni: 5000
+    
+- name: map VNI to NVE
+  nxos_vxlan_vtep_vni:
+    interface: nve1
+    vni: 5000
+    ingress_replication: bgp
