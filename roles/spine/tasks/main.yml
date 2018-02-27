@@ -13,4 +13,5 @@
     afi: l2vpn
     safi: evpn
     route_reflector_client: true
+    send_community: both
   with_dict: "{{ evpn_leaf_loopbacks }}"

@@ -53,4 +53,5 @@
     neighbor: "{{ item.value.loopback }}"
     afi: l2vpn
     safi: evpn
+    send_community: both
   with_dict: "{{ evpn_spine_loopbacks }}"
