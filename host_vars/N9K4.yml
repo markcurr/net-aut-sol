@@ -12,3 +12,7 @@ interfaces:
     ip: 4.4.4.4
     mask: 32
     loopback: True
+
+   Loopback1:
+    ip: 10.99.99.4
+    mask: 32

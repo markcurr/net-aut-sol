@@ -6,3 +6,16 @@
     feature: "{{ item }}"
     provider: "{{ nxos_provider }}"
   with_list: "{{ features }}"
+  
+- name: set nv overlay to evpn
+  nxos_evpn_global:
+        nv_overlay_evpn: true
+        
+- name: configure VTEP
+  nxos_vxlan_vtep:
+        interface: nve1
+        description: default
+        host_reachability: default
+        source_interface: Loopback1
+        source_interface_hold_down_time: 30
+        shutdown: default
