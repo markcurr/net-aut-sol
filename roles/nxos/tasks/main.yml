@@ -48,6 +48,11 @@
     ospf: 1
     state: present
   with_dict: "{{ interfaces }}"
+
+- name: create overlay VRF
+  nxos_vrf:
+    vrf: overlay
+    state: present
   
 - name: configure BGP
   nxos_bgp: 
@@ -56,21 +61,16 @@
   with_dict: "{{ evpn_loopbacks }}"
   when: "item.key  ==  inventory_hostname"
   
-- name: configure ipv4 address-family
+- name: configure ipv4 address-family to advertise evpn
   nxos_bgp_af:
     asn: 65535
     afi: ipv4
     safi: unicast
+    vrf: overlay
     advertise_l2vpn_evpn: true
   
-- name: configure evpn address-family
-  nxos_bgp_af:
-    asn: 65535
-    afi: l2vpn
-    safi: evpn
-    advertise_l2vpn_evpn: true
 
-- name: configure BGP ipv4 neighbors
+- name: configure BGP neighbors
   nxos_bgp_neighbor:
     asn: 65535
     neighbor: "{{ item.value.loopback }}"
@@ -79,7 +79,7 @@
   with_dict: "{{ evpn_loopbacks }}"
   when: "item.key  !=  inventory_hostname"
   
-- name: configure BGP evpn neighbors
+- name: configure BGP neighbors evpn AF
   nxos_bgp_neighbor_af:
     asn: 65535
     neighbor: "{{ item.value.loopback }}"
