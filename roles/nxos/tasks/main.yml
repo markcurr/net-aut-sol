@@ -60,10 +60,10 @@
   
 - name: configure BGP
   nxos_bgp: 
-    router_id: "{{ item.value.loopback }}"
+    router_id: "{{ item.value.ip }}"
     asn: 65535
-  with_dict: "{{ evpn_loopbacks }}"
-  when: "item.key  ==  inventory_hostname"
+  with_dict: "{{ interfaces }}"
+  when: {{ item.key }} == Loopback0
   
 - name: configure ipv4 address-family to advertise evpn
   nxos_bgp_af:
