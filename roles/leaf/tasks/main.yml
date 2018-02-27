@@ -19,20 +19,24 @@
         source_interface: Loopback1
         source_interface_hold_down_time: 30
         shutdown: no
-        
-- name: vni configuration
+  
+- name: map VLANs to VNIs
+  nxos_vlan:
+    vlan_id: "{{ item.value.vlan }}"
+    mapped_vni: "{{ item.value.vni }}"
+    name: "{{ item.key }}"
+  with_dict: "{{ vni_segments }}"
+    
+- name: vni evpn configuration
   nxos_evpn_vni:
-    vni: 5000
+    vni: "{{ item.value.vni }}"
     route_distinguisher: auto
     route_target_both: auto
-    
-- name: VLAN-VNI mapping
-  nxos_vlan:
-    vlan_id: 50
-    mapped_vni: 5000
+  with_dict: "{{ vni_segments }}"
     
 - name: map VNI to NVE
   nxos_vxlan_vtep_vni:
     interface: nve1
-    vni: 5000
+    vni: "{{ item.value.vni }}"
     ingress_replication: bgp
+  with_dict: "{{ vni_segments }}"

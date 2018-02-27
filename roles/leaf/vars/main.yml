@@ -5,3 +5,11 @@ features:
   - lacp
   - nv overlay
   - vn-segment-vlan-based
+  
+vni_segments:
+  test1:
+    vlan: 50
+    vni: 5000
+  test2:
+    vlan: 60
+    vni: 6000
