@@ -43,8 +43,8 @@
   
 - name: configure BGP
   nxos_bgp: 
-    router_id: "{{ item.0.value.ip }}"
+    router_id: "{{ item.value.loopback }}"
     asn: 65535
-  with_subelements: 
-    - "{{ interfaces }}"
-    - Loopback0
+  with_dict: "{{ evpn_loopbacks }}"
+  when: "'{{ item.key }}' == '{{ inventory_hostname }}'"
+  
