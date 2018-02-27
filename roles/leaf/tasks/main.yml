@@ -24,10 +24,7 @@
   nxos_evpn_vni:
     vni: 5000
     route_distinguisher: auto
-    route_target_import:
-      - auto
-    route_target_export: auto
-    route_target_both: default
+    route_target_both: auto
     
 - name: VLAN-VNI mapping
   nxos_vlan:
