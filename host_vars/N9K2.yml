@@ -12,8 +12,5 @@ interfaces:
     ip: 2.2.2.2
     mask: 32
     loopback: True
-    
-   Loopback1:
-    ip: 22.22.22.22
-    mask: 32
+   
     
