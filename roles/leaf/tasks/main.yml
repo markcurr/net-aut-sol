@@ -19,3 +19,17 @@
         source_interface: Loopback1
         source_interface_hold_down_time: 30
         shutdown: no
+        
+- name: vni configuration
+  nxos_evpn_vni:
+    vni: 5000
+    route_distinguisher: auto
+    route_target_import:
+      - auto
+    route_target_export: auto
+    route_target_both: default
+    
+- name: VLAN-VNI mapping
+  nxos_vlan:
+    vlan_id: 50
+    mapped_vni: 5000
