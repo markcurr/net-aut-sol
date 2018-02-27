@@ -1,0 +1,19 @@
+---
+
+- name: configure spines
+  hosts: spines
+  connection: local
+  gather_facts: no
+
+  roles: 
+    - nxos
+    - spine
+
+- name: configure leaves
+  hosts: leaves
+  connection: local
+  gather_facts: no
+
+  roles: 
+    - nxos
+    - leaf

@@ -1,0 +1,5 @@
+features:
+  - hsrp
+  - interface-vlan
+  - vpc
+  - lacp

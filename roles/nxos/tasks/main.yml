@@ -1,0 +1,50 @@
+---
+
+- name: enable NXAPI
+  nxos_config:
+    lines:
+      - 'feature nxapi'
+    provider: "{{ nxos_provider }}"
+    transport: cli
+
+
+  #check features enabled
+- name: enable shared nxos features
+  nxos_feature:
+    state: enabled
+    feature: "{{ item }}"
+    provider: "{{ nxos_provider }}"
+  with_list: "{{ features }}"
+  
+- name: set interface to L3 and admin up
+  nxos_interface:
+   admin_state: up
+   interface: "{{ item.key }}"
+   mode: layer3
+   state: present
+   provider: "{{ nxos_provider }}"
+  with_dict: "{{ interfaces }}"
+ 
+- name: configure interface IP
+  nxos_ip_interface:
+   interface: "{{ item.key }}"
+   addr: "{{ item.value.ip }}"
+   mask: "{{ item.value.mask }}"
+   provider: "{{ nxos_provider }}"
+  with_dict: "{{ interfaces }}"
+
+
+- name: configure ospf domain 1
+  nxos_ospf:
+    state: present
+    ospf: 1
+    provider: "{{ nxos_provider }}"
+
+- name: configure ospf interface
+  nxos_interface_ospf:
+    area: 0
+    provider: "{{ nxos_provider }}"
+    interface: "{{ item.key }}"
+    ospf: 1
+    state: present
+  with_dict: "{{ interfaces }}"

@@ -1,0 +1,8 @@
+---
+ #check features enabled
+- name: enable leaf specific features
+  nxos_feature:
+    state: enabled
+    feature: "{{ item }}"
+    provider: "{{ nxos_provider }}"
+  with_list: "{{ features }}"
