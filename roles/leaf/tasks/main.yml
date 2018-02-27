@@ -39,12 +39,21 @@
     ingress_replication: bgp
   with_dict: "{{ vni_segments }}"
   
-- name: configure BGP neighborships to spine (ipv4)
+- name: configure BGP neighbors
   nxos_bgp_neighbor:
     asn: 65535
     neighbor: "{{ item.value.loopback }}"
     remote_as: 65535
     update_source: Loopback0
+  with_dict: "{{ evpn_spine_loopbacks }}"
+
+- name: configure BGP neighborships to spine (ipv4)
+  nxos_bgp_neighbor_af:
+    asn: 65535
+    neighbor: "{{ item.value.loopback }}"
+    afi: ipv4
+    safi: unicast
+    send_community: both
   with_dict: "{{ evpn_spine_loopbacks }}"
   
 - name: configure BGP neighborships to spine (evpn)
