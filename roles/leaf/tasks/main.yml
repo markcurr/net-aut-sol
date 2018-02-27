@@ -40,3 +40,11 @@
     vni: "{{ item.value.vni }}"
     ingress_replication: bgp
   with_dict: "{{ vni_segments }}"
+  
+- name: configure BGP
+  nxos_bgp: 
+    router_id: "{{ item.0.value.ip }}"
+    asn: 65535
+  with_subelements: 
+    - "{{ interfaces }}"
+    - Loopback0
