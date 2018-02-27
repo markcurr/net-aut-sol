@@ -48,6 +48,10 @@
     ospf: 1
     state: present
   with_dict: "{{ interfaces }}"
+  
+- name: set nv overlay to evpn
+  nxos_evpn_global:
+        nv_overlay_evpn: true
 
 - name: create overlay VRF
   nxos_vrf:
