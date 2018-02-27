@@ -3,3 +3,4 @@ features:
   - interface-vlan
   - vpc
   - lacp
+  - nv overlay
