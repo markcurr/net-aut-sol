@@ -41,10 +41,4 @@
     ingress_replication: bgp
   with_dict: "{{ vni_segments }}"
   
-- name: configure BGP
-  nxos_bgp: 
-    router_id: "{{ item.value.loopback }}"
-    asn: 65535
-  with_dict: "{{ evpn_loopbacks }}"
-  when: "'{{ item.key }}' == '{{ inventory_hostname }}'"
-  
+
