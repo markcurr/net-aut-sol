@@ -12,5 +12,5 @@
     neighbor: "{{ item.value.loopback }}"
     afi: l2vpn
     safi: evpn
-    route_reflector_client_true
+    route_reflector_client: true
   with_dict: "{{ evpn_leaf_loopbacks }}"
