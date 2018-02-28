@@ -22,3 +22,6 @@ vni_segments:
   db:
     vlan: 102
     vni: 10200
+  prod:
+    vlan: 103
+    vni: 10300
