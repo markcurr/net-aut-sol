@@ -13,3 +13,6 @@ vni_segments:
   test2:
     vlan: 60
     vni: 6000
+  web:
+    vlan: 20
+    vni: 2000
