@@ -6,3 +6,94 @@
     feature: "{{ item }}"
     provider: "{{ nxos_provider }}"
   with_list: "{{ features }}"
+  
+
+        
+- name: configure VTEP
+  nxos_vxlan_vtep:
+        interface: nve1
+        description: default
+        host_reachability: yes
+        source_interface: Loopback1
+        source_interface_hold_down_time: 30
+        shutdown: no
+  
+- name: map VLANs to VNIs
+  nxos_vlan:
+    vlan_id: "{{ item.value.vlan }}"
+    mapped_vni: "{{ item.value.vni }}"
+    name: "{{ item.key }}"
+  with_dict: "{{ vni_segments }}"
+    
+- name: vni evpn configuration
+  nxos_evpn_vni:
+    vni: "{{ item.value.vni }}"
+    route_distinguisher: auto
+    route_target_both: auto
+  with_dict: "{{ vni_segments }}"
+    
+- name: map VNI to NVE
+  nxos_vxlan_vtep_vni:
+    interface: nve1
+    vni: "{{ item.value.vni }}"
+    ingress_replication: bgp
+  with_dict: "{{ vni_segments }}"
+  
+- name: configure BGP neighbors
+  nxos_bgp_neighbor:
+    asn: 65535
+    neighbor: "{{ item.value.loopback }}"
+    remote_as: 65535
+    update_source: Loopback0
+  with_dict: "{{ evpn_spine_loopbacks }}"
+
+- name: configure BGP neighborships to spine (ipv4)
+  nxos_bgp_neighbor_af:
+    asn: 65535
+    neighbor: "{{ item.value.loopback }}"
+    afi: ipv4
+    safi: unicast
+    send_community: both
+  with_dict: "{{ evpn_spine_loopbacks }}"
+  
+- name: configure BGP neighborships to spine (evpn)
+  nxos_bgp_neighbor_af:
+    asn: 65535
+    neighbor: "{{ item.value.loopback }}"
+    afi: l2vpn
+    safi: evpn
+    send_community: both
+  with_dict: "{{ evpn_spine_loopbacks }}"
+ 
+- name: set interface to L2 and admin up
+  nxos_interface:
+   admin_state: up
+   interface: "{{ item.key }}"
+   mode: layer2
+   state: present
+   provider: "{{ nxos_provider }}"
+  with_dict: "{{ l2_interfaces }}"
+  
+- name: configure l2 switchports
+  nxos_switchport:
+   interface: "{{ item.key }}"
+   mode: access
+   access_vlan: "{{ item.value.vlan }}"
+   provider: "{{ nxos_provider }}"
+  with_dict: "{{ l2_interfaces }}"
+  
+- name: gather interface information
+  nxos_facts:
+    gather_subset: interfaces
+    provider: "{{ nxos_provider }}"
+  register: ints
+  
+  
+- name: check loopback1 bugfix
+  nxos_config:
+    lines:
+      - 'shut'
+      - 'no shut'
+    parents:
+      - 'interface loopback1'
+  when: ansible_net_interfaces|json_query('loopback1.state') == 'down'

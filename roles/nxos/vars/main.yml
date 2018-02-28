@@ -1,3 +1,15 @@
 features:
   - ospf
   - bgp
+  
+evpn_spine_loopbacks:
+  N9K1: 
+    loopback: 1.1.1.1
+  N9K2: 
+    loopback: 2.2.2.2
+    
+evpn_leaf_loopbacks:
+  N9K3: 
+    loopback: 3.3.3.3
+  N9K4: 
+    loopback: 4.4.4.4

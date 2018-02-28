@@ -1,0 +1,27 @@
+- name: configure BGP neighbors
+  nxos_bgp_neighbor:
+    asn: 65535
+    neighbor: "{{ item.value.loopback }}"
+    remote_as: 65535
+    update_source: Loopback0
+  with_dict: "{{ evpn_leaf_loopbacks }}"
+ 
+- name: configure BGP neighbors to leaves (ipv4)
+  nxos_bgp_neighbor_af:
+    asn: 65535
+    neighbor: "{{ item.value.loopback }}"
+    afi: ipv4
+    safi: unicast
+    route_reflector_client: true
+    send_community: both
+  with_dict: "{{ evpn_leaf_loopbacks }}"
+  
+- name: configure BGP neighbors to leaves (evpn)
+  nxos_bgp_neighbor_af:
+    asn: 65535
+    neighbor: "{{ item.value.loopback }}"
+    afi: l2vpn
+    safi: evpn
+    route_reflector_client: true
+    send_community: both
+  with_dict: "{{ evpn_leaf_loopbacks }}"
