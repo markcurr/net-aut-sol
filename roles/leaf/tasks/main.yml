@@ -64,10 +64,18 @@
     safi: evpn
     send_community: both
   with_dict: "{{ evpn_spine_loopbacks }}"
-  
-- name: configure l2 interfaces
-  nxos_switchport:
+ 
+- name: set interface to L2 and admin up
+  nxos_interface:
    admin_state: up
+   interface: "{{ item.key }}"
+   mode: layer2
+   state: present
+   provider: "{{ nxos_provider }}"
+  with_dict: "{{ l2_interfaces }}"
+  
+- name: configure l2 switchports
+  nxos_switchport:
    interface: "{{ item.key }}"
    mode: access
    access_vlan: "{{ item.value.vlan }}"
