@@ -82,3 +82,18 @@
    provider: "{{ nxos_provider }}"
   with_dict: "{{ l2_interfaces }}"
   
+- name: gather interface information
+  nxos_facts:
+    gather_subset: interfaces
+    provider: "{{ nxos_provider }}"
+  register: ints
+  
+  
+- name: check loopback1 bugfix
+  nxos_config:
+    lines:
+      - 'shut'
+      - 'no shut'
+    parents:
+      - 'interface loopback1'
+  when: ansible_net_interfaces|json_query('loopback1.state') == 'down'
