@@ -19,4 +19,4 @@ l3_interfaces:
     
 l2_interfaces:
   Ethernet1/5:
-    vlan: 20
+    vlan: 50
