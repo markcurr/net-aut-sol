@@ -14,11 +14,11 @@ vni_segments:
     vlan: 60
     vni: 6000
   web:
-    vlan: 20
-    vni: 2000
+    vlan: 100
+    vni: 10000
   app:
-    vlan: 30
-    vni: 3000
+    vlan: 101
+    vni: 10100
   db:
-    vlan: 40
-    vni: 4000
+    vlan: 102
+    vni: 10200
