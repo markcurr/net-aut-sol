@@ -16,3 +16,9 @@ vni_segments:
   web:
     vlan: 20
     vni: 2000
+  app:
+    vlan: 30
+    vni: 3000
+  db:
+    vlan: 40
+    vni: 4000
