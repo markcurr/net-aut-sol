@@ -6,17 +6,9 @@
 
   tasks:
   - name: wipe nxos devices
-    nxos_config:
-      lines:
-        - no int loopback0
-        - default int ethernet1/1-2
-        - no feature bgp
-        - no feature hsrp
-        - no feature interface-vlan
-        - no feature nv overlay
-        - no feature ospf
-        - no feature vpc
-        - no feature lacp
+    nxos_command:
+      commands:
+        - rollback running-config checkpoint BLANK
     provider: "{{ nxos_provider }}"
-
+    timeout: 60
   
