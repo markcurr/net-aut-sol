@@ -13,3 +13,5 @@ evpn_leaf_loopbacks:
     loopback: 3.3.3.3
   N9K4: 
     loopback: 4.4.4.4
+  N9K5:
+    loopback: 5.5.5.5
