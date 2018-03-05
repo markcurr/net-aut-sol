@@ -4,11 +4,8 @@
   nxos_config:
     lines:
       - 'feature nxapi'
-    provider: "{{ nxos_provider }}"
-    transport: cli
+    provider: "{{ nxos_provider_cli }}"
 
-
-  #check features enabled
 - name: enable shared nxos features
   nxos_feature:
     state: enabled
