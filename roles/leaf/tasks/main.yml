@@ -5,6 +5,7 @@
     state: enabled
     feature: "{{ item }}"
     provider: "{{ nxos_provider }}"
+    transport: cli
   with_list: "{{ features }}"
   
 
