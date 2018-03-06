@@ -4,11 +4,8 @@
   nxos_feature:
     state: enabled
     feature: "{{ item }}"
-    provider: "{{ nxos_provider }}"
     transport: cli
   with_list: "{{ features }}"
-  
-
         
 - name: configure VTEP
   nxos_vxlan_vtep:
@@ -72,7 +69,6 @@
    interface: "{{ item.key }}"
    mode: layer2
    state: present
-   provider: "{{ nxos_provider }}"
   with_dict: "{{ l2_interfaces }}"
   
 - name: configure l2 switchports
@@ -80,7 +76,6 @@
    interface: "{{ item.key }}"
    mode: access
    access_vlan: "{{ item.value.vlan }}"
-   provider: "{{ nxos_provider }}"
   with_dict: "{{ l2_interfaces }}"
   
 - name: gather interface information
