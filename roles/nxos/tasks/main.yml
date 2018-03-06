@@ -4,11 +4,8 @@
   nxos_config:
     lines:
       - 'feature nxapi'
-    provider: "{{ nxos_provider }}"
-    transport: cli
+    provider: "{{ nxos_provider_cli }}"
 
-
-  #check features enabled
 - name: enable shared nxos features
   nxos_feature:
     state: enabled
@@ -23,7 +20,6 @@
    interface: "{{ item.key }}"
    mode: layer3
    state: present
-   provider: "{{ nxos_provider }}"
   with_dict: "{{ l3_interfaces }}"
  
 - name: configure interface IP
@@ -31,7 +27,6 @@
    interface: "{{ item.key }}"
    addr: "{{ item.value.ip }}"
    mask: "{{ item.value.mask }}"
-   provider: "{{ nxos_provider }}"
   with_dict: "{{ l3_interfaces }}"
 
 
@@ -39,12 +34,10 @@
   nxos_ospf:
     state: present
     ospf: 1
-    provider: "{{ nxos_provider }}"
 
 - name: configure ospf interface
   nxos_interface_ospf:
     area: 0
-    provider: "{{ nxos_provider }}"
     interface: "{{ item.key }}"
     ospf: 1
     state: present

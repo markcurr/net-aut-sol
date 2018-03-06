@@ -1,0 +1,22 @@
+---
+l3_interfaces:
+   Ethernet1/1:
+    ip: 10.31.15.5
+    mask: 24
+   
+   Ethernet1/2:
+    ip: 10.31.25.5
+    mask: 24
+   
+   Loopback0:
+    ip: 5.5.5.5
+    mask: 32
+    loopback: True
+
+   Loopback1:
+    ip: 10.99.99.5
+    mask: 32
+    
+l2_interfaces:
+  Ethernet1/5:
+    vlan: 103

@@ -7,6 +7,10 @@ l3_interfaces:
    Ethernet1/2:
     ip: 10.31.24.2
     mask: 24
+    
+   Ethernet1/3:
+    ip: 10.31.25.2
+    mask: 24
    
    Loopback0:
     ip: 2.2.2.2

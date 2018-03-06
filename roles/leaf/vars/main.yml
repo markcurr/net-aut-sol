@@ -16,12 +16,16 @@ vni_segments:
   web:
     vlan: 100
     vni: 10000
+    subnet: 10.0.0.1/24
   app:
     vlan: 101
     vni: 10100
+    subnet: 10.0.1.1/24
   db:
     vlan: 102
     vni: 10200
+    subnet: 10.0.2.1/24
   prod:
     vlan: 103
     vni: 10300
+    
