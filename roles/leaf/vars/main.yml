@@ -20,11 +20,11 @@ vni_segments:
   app:
     vlan: 101
     vni: 10100
-    subnet: 10.0.1.1/24
+    subnet: 11.0.0.1/24
   db:
     vlan: 102
     vni: 10200
-    subnet: 10.0.2.1/24
+    subnet: 12.0.0.1/24
   prod:
     vlan: 103
     vni: 10300

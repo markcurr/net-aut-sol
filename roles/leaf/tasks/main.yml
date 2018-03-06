@@ -38,8 +38,9 @@
   nxos_ip_interface:
     interface: "Vlan{{item.value.vlan}}"
     addr: "{{ item.value.subnet|ipaddr('address')}}"
-    mask: "{{ item.value.subnet|ipaddr('netmask')}}"
-  with_dict: "{{ vni_segments|item.value.subnet is defined }}"
+    mask: "{{ item.value.subnet|ipaddr('prefix')}}"
+  with_dict: "{{ vni_segments }}"
+  when: item.value.subnet is defined
 
 - name: vni evpn configuration
   nxos_evpn_vni:
