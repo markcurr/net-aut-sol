@@ -22,7 +22,25 @@
     mapped_vni: "{{ item.value.vni }}"
     name: "{{ item.key }}"
   with_dict: "{{ vni_segments }}"
+  
+- name: configure anycast MAC
+  nxos_config:
+    lines: fabric forwarding anycast-gateway-mac 1.1.1
     
+- name: create SVIs
+  nxos_interface:
+    interface: "Vlan{{item.value.vlan}}"
+    mode: layer3
+    fabric_forwarding_anycast_gateway: True
+  with_dict: "{{ vni_segments }}"
+  
+- name: create SVI ips
+  nxos_ip_interface:
+    interface: "Vlan{{item.value.vlan}}"
+    addr: "{{ item.value.subnet|ipaddr('address')}}"
+    mask: "{{ item.value.subnet|ipaddr('netmask')}}"
+  with_dict: "{{ vni_segments|item.value.subnet is defined }}"
+
 - name: vni evpn configuration
   nxos_evpn_vni:
     vni: "{{ item.value.vni }}"
