@@ -25,8 +25,8 @@
 - name: configure interface IP
   nxos_ip_interface:
    interface: "{{ item.key }}"
-    addr: "{{ item.value.ip|ipaddr('address')}}"
-    mask: "{{ item.value.ip|ipaddr('prefix')}}"
+   addr: "{{ item.value.ip|ipaddr('address')}}"
+   mask: "{{ item.value.ip|ipaddr('prefix')}}"
   with_dict: "{{ l3_interfaces }}"
 
 
