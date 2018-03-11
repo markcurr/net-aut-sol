@@ -25,8 +25,8 @@
 - name: configure interface IP
   nxos_ip_interface:
    interface: "{{ item.key }}"
-   addr: "{{ item.value.ip }}"
-   mask: "{{ item.value.mask }}"
+   addr: "{{ item.value.ip|ipaddr('address')}}"
+   mask: "{{ item.value.ip|ipaddr('prefix')}}"
   with_dict: "{{ l3_interfaces }}"
 
 
@@ -54,7 +54,7 @@
   
 - name: configure BGP
   nxos_bgp: 
-    router_id: "{{ item.value.ip }}"
+    router_id: "{{ item.value.ip|ipaddr('address')}}"
     asn: 65535
   with_dict: "{{ l3_interfaces }}"
   when: "item.key == 'Loopback0'"
