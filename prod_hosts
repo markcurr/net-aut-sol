@@ -1,0 +1,12 @@
+[nxos:children]
+leaves
+spines
+
+[spines]
+N9K1
+N9K2
+
+[leaves]
+N9K3
+N9K4
+N9K5

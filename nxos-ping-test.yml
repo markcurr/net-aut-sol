@@ -1,0 +1,20 @@
+---
+
+- name: test loopback reachability
+  hosts: nxos
+  connection: local
+  gather_facts: no
+ 
+  
+  tasks: 
+    - name: include variables  
+      include_vars: 
+        file: roles/nxos/vars/main.yml
+        
+    - name: ping loopbacks
+      nxos_ping:
+        dest: "{{ item.value.loopback }}"
+        provider: "{{ nxos_provider }}"
+      with_dict: "{{ evpn_spine_loopbacks | combine(evpn_leaf_loopbacks) }}"
+      when: item.key != inventory_hostname
+
