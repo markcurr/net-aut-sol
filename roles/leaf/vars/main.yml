@@ -28,4 +28,7 @@ vni_segments:
   prod:
     vlan: 103
     vni: 10300
+  octopus:
+    vlan: 104
+    vni: 10400
     
