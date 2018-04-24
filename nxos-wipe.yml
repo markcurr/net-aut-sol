@@ -1,7 +1,7 @@
 ---
 - name: check Features
   hosts: nxos
-  connection: local
+  connection: network_cli
   gather_facts: no
 
   tasks:
@@ -9,6 +9,3 @@
     nxos_command:
       commands:
         - rollback running-config checkpoint BLANK
-    provider: "{{ nxos_provider }}"
-    timeout: 60
-  

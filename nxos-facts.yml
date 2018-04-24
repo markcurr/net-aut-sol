@@ -1,0 +1,17 @@
+---
+- name: check Features
+  hosts: nxos
+  connection: network_cli
+  gather_facts: no
+
+  tasks:
+  - name: gather nxos facts
+    nxos_facts:
+      gather_subset:
+        - all
+    register: facts
+    
+  - local_action: copy content="{{ facts | to_nice_json }}" dest=/home/mark/net-aut-sol/{{ inventory_hostname }}-facts.txt
+
+      
+ 
