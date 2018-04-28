@@ -2,7 +2,7 @@
 
 - name: configure spines
   hosts: spines
-  connection: local
+  connection: network_cli
   gather_facts: no
 
   roles: 
@@ -11,7 +11,7 @@
 
 - name: configure leaves
   hosts: leaves
-  connection: local
+  connection: network_cli
   gather_facts: no
 
   roles: 

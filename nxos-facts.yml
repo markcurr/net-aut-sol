@@ -1,0 +1,51 @@
+---
+- name: gather information
+  hosts: nxos
+  connection: network_cli
+  gather_facts: no
+
+  tasks:
+  - name: gather nxos facts
+    nxos_facts:
+      gather_subset:
+        - interfaces
+    register: facts
+    
+  - name: "set fact for only interfaces with ip in them"
+    set_fact:
+      N9K_IP: '{{ N9K_IP | default({}) | combine({ item.key: item.value.ipv4.address}) }}'
+    with_dict: "{{ facts['ansible_facts']['ansible_net_interfaces'] }}"
+    when: "item['value']['ipv4'] is defined"
+    loop_control: 
+      label: '{{item.key}}'
+
+  - name: debug
+    debug:
+      var: "N9K_IP"
+      
+  - name: ensure file exists
+    copy:
+      content: ""
+      dest: ./N9K_IPs.txt
+      force: yes
+    run_once: true
+  
+  
+- name: write to file  
+  hosts: nxos
+  connection: network_cli
+  gather_facts: no
+  serial: 1
+  
+  tasks:
+  
+  - lineinfile:
+      path: ./N9K_IPs.txt
+      state: present
+      line: "\n{{ inventory_hostname }} : {{ N9K_IP }}"
+
+    
+
+
+      
+ 

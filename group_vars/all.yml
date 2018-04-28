@@ -11,10 +11,10 @@ nxos_provider:
   password: "ansible"
   host: "{{ inventory_hostname }}"
   transport: nxapi
-  timeout: 30
+  timeout: 60
 nxos_provider_cli:
   username: "ansible"
   password: "ansible"
   host: "{{ inventory_hostname }}"
   transport: cli
-  timeout: 30
+  timeout: 60

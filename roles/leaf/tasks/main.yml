@@ -4,17 +4,16 @@
   nxos_feature:
     state: enabled
     feature: "{{ item }}"
-    transport: cli
   with_list: "{{ features }}"
         
 - name: configure VTEP
   nxos_vxlan_vtep:
-        interface: nve1
-        description: default
-        host_reachability: yes
-        source_interface: Loopback1
-        source_interface_hold_down_time: 30
-        shutdown: no
+    interface: nve1
+    description: default
+    host_reachability: yes
+    source_interface: loopback1
+    source_interface_hold_down_time: 30
+    shutdown: no
   
 - name: map VLANs to VNIs
   nxos_vlan:
@@ -30,10 +29,10 @@
 - name: create SVIs
   nxos_interface:
     interface: "Vlan{{item.value.vlan}}"
-    mode: layer3
     fabric_forwarding_anycast_gateway: True
   with_dict: "{{ vni_segments }}"
-  
+  loop_control:
+    label: "vlan {{ item.value.vlan }}" 
 - name: create SVI ips
   nxos_ip_interface:
     interface: "Vlan{{item.value.vlan}}"
@@ -41,6 +40,8 @@
     mask: "{{ item.value.subnet|ipaddr('prefix')}}"
   with_dict: "{{ vni_segments }}"
   when: item.value.subnet is defined
+  loop_control:
+    label: "vlan {{ item.value.vlan }}"
 
 - name: vni evpn configuration
   nxos_evpn_vni:
@@ -61,7 +62,7 @@
     asn: 65535
     neighbor: "{{ item.value.loopback }}"
     remote_as: 65535
-    update_source: Loopback0
+    update_source: loopback0
   with_dict: "{{ evpn_spine_loopbacks }}"
 
 - name: configure BGP neighborships to spine (ipv4)
@@ -100,7 +101,6 @@
 - name: gather interface information
   nxos_facts:
     gather_subset: interfaces
-    provider: "{{ nxos_provider }}"
   register: ints
   
   

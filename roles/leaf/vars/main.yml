@@ -28,4 +28,12 @@ vni_segments:
   prod:
     vlan: 103
     vni: 10300
+  octopus:
+    vlan: 104
+    vni: 10400
+  bank:
+    vlan: 105
+    vni: 10500
+    subnet: 15.0.0.1/24
+
     
