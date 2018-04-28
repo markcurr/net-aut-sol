@@ -6,11 +6,14 @@ l3_interfaces:
    Ethernet1/2:
     ip: 10.31.23.3/24
    
-   Loopback0:
+   loopback0:
     ip: 3.3.3.3/32
     
    Loopback1:
     ip: 10.99.99.3/32
+    
+   JOKE_INTERFACE:
+    ip: 13.13.13.13/13
     
 l2_interfaces:
   Ethernet1/5:

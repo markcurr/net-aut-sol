@@ -4,31 +4,47 @@
   nxos_config:
     lines:
       - 'feature nxapi'
-    provider: "{{ nxos_provider_cli }}"
+
 
 - name: enable shared nxos features
   nxos_feature:
     state: enabled
     feature: "{{ item }}"
-    provider: "{{ nxos_provider }}"
   with_list: "{{ features }}"
   
 
-- name: set interface to L3 and admin up
+- name: admin up interfaces
   nxos_interface:
    admin_state: up
    interface: "{{ item.key }}"
-   mode: layer3
    state: present
   with_dict: "{{ l3_interfaces }}"
  
-- name: configure interface IP
+# - name: configure interface IP
+  # nxos_l3_interface:
+   # name: "{{ item.key }}"
+   # ipv4: "{{ item.value.ip }}"
+  # with_dict: "{{ l3_interfaces }}"
+  # loop_control:
+    # label: "{{ item.key }}"
+
+  
+- name: ensure interface exists
+  nxos_interface:
+    name: "{{ item.key }}"
+  with_dict: "{{ l3_interfaces }}"
+  loop_control:
+    label: "{{ item.key }}"
+  
+  
+- name: layer 3 interface configuration
   nxos_ip_interface:
    interface: "{{ item.key }}"
-   addr: "{{ item.value.ip|ipaddr('address')}}"
-   mask: "{{ item.value.ip|ipaddr('prefix')}}"
+   addr: "{{ item.value.ip | ipaddr('address') }}"
+   mask: "{{ item.value.ip | ipaddr('prefix') }}"
   with_dict: "{{ l3_interfaces }}"
-
+  loop_control:
+    label: "{{ item.key }}"
 
 - name: configure ospf domain 1
   nxos_ospf:
@@ -54,10 +70,9 @@
   
 - name: configure BGP
   nxos_bgp: 
-    router_id: "{{ item.value.ip|ipaddr('address')}}"
+    router_id: "{{ l3_interfaces.Loopback0.ip|ipaddr('address')}}"
     asn: 65535
-  with_dict: "{{ l3_interfaces }}"
-  when: "item.key == 'Loopback0'"
+
   
 - name: configure ipv4 address-family to advertise evpn
   nxos_bgp_af:

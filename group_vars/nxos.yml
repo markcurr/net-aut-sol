@@ -1,0 +1,9 @@
+---
+ansible_connection: network_cli
+ansible_user: ansible
+ansible_ssh_pass: ansible
+ansible_network_os: nxos
+timeout: 60
+ANSIBLE_PERSISTENT_COMMAND_TIMEOUT: 60
+
+
