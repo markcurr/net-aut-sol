@@ -4,7 +4,7 @@
   nxos_feature:
     state: enabled
     feature: "{{ item }}"
-  with_list: "{{ features }}"
+  with_list: "{{ leaf_features }}"
         
 - name: configure VTEP
   nxos_vxlan_vtep:
@@ -21,6 +21,8 @@
     mapped_vni: "{{ item.value.vni }}"
     name: "{{ item.key }}"
   with_dict: "{{ vni_segments }}"
+  #when leaf is vni member
+  
   
 - name: configure anycast MAC
   nxos_config:
@@ -31,8 +33,11 @@
     interface: "Vlan{{item.value.vlan}}"
     fabric_forwarding_anycast_gateway: True
   with_dict: "{{ vni_segments }}"
+  #when leaf is vni member
   loop_control:
     label: "vlan {{ item.value.vlan }}" 
+    
+    
 - name: create SVI ips
   nxos_ip_interface:
     interface: "Vlan{{item.value.vlan}}"
@@ -40,6 +45,7 @@
     mask: "{{ item.value.subnet|ipaddr('prefix')}}"
   with_dict: "{{ vni_segments }}"
   when: item.value.subnet is defined
+  #when leaf is vni member
   loop_control:
     label: "vlan {{ item.value.vlan }}"
 
@@ -49,6 +55,7 @@
     route_distinguisher: auto
     route_target_both: auto
   with_dict: "{{ vni_segments }}"
+  #when leaf is vni member
     
 - name: map VNI to NVE
   nxos_vxlan_vtep_vni:
@@ -104,7 +111,7 @@
   register: ints
   
   
-- name: check loopback1 bugfix
+- name: loopback1 bugfix
   nxos_config:
     lines:
       - 'shut'
