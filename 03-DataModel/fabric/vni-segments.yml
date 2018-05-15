@@ -1,0 +1,26 @@
+---
+    
+vni_segments:
+  test1:
+    vlan: 50
+    vni: 5000
+  test2:
+    vlan: 60
+    vni: 6000
+    interfaces:
+      N9K3:
+        - Ethernet1/7
+      N9K4:
+        - Ethernet1/7
+  web:
+    vlan: 100
+    vni: 10000
+    subnet: 10.0.0.1/24
+    interfaces:
+      N9K3:
+        - Ethernet1/5
+        - Ethernet1/6
+      N9K4: 
+        - Ethernet1/5
+
+        

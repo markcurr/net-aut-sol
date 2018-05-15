@@ -1,0 +1,30 @@
+---
+
+- hosts: R1
+  connection: local
+  gather_facts: no
+  tasks:
+  - name: Configure OSPF on ethernet interface
+    ios_config:
+      lines:
+        - ip address {{item.value.ip}} {{item.value.netmask}}
+        - ip ospf 1 area 0
+        - ip ospf network point-to-point
+        - no shutdown
+      provider: "{{ cli }}"
+      parents: interface {{item.key}}
+      save_when: modified
+    with_dict: "{{ interfaces }}"
+    when: item.value.loopback is not defined
+
+  - name: Configure OSPF on loopback
+    ios_config:
+      lines:
+        - ip address {{item.value.ip}} {{item.value.netmask}}
+        - ip ospf 1 area 0
+        - no shutdown
+      provider: "{{ cli }}"
+      parents: interface {{item.key}}
+      save_when: modified
+    with_dict: "{{ interfaces }}"
+    when: item.value.loopback is defined
