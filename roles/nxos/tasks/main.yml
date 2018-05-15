@@ -1,25 +1,32 @@
 ---
 
+- name: include vars
+  include_vars:
+    file: fabric/evpn-fabric.yml
+    
 - name: enable NXAPI
   nxos_config:
     lines:
       - 'feature nxapi'
 
-
 - name: enable shared nxos features
   nxos_feature:
     state: enabled
     feature: "{{ item }}"
-  with_list: "{{ features }}"
+  with_list: "{{ nxos_features }}"
   
 
 - name: admin up interfaces
   nxos_interface:
    admin_state: up
-   interface: "{{ item.key }}"
+   interface: "{{ item.port }}"
    state: present
-  with_dict: "{{ l3_interfaces }}"
- 
+  with_list: "{{ fabric }}"
+  loop_control: 
+    label: "{{ item.host }}-{{ item.port }}"
+  when: item.host == inventory_hostname
+  
+  
 # - name: configure interface IP
   # nxos_l3_interface:
    # name: "{{ item.key }}"
@@ -29,22 +36,23 @@
     # label: "{{ item.key }}"
 
   
-- name: ensure interface exists
-  nxos_interface:
-    name: "{{ item.key }}"
-  with_dict: "{{ l3_interfaces }}"
-  loop_control:
-    label: "{{ item.key }}"
+# - name: ensure interface exists
+  # nxos_interface:
+    # name: "{{ item.key }}"
+  # with_list: "{{ fabric }}"
+  # loop_control:
+    # label: "{{ item.key }}"
   
   
 - name: layer 3 interface configuration
   nxos_ip_interface:
-   interface: "{{ item.key }}"
-   addr: "{{ item.value.ip | ipaddr('address') }}"
-   mask: "{{ item.value.ip | ipaddr('prefix') }}"
-  with_dict: "{{ l3_interfaces }}"
+    interface: "{{ item.port }}"
+    addr: "{{ item.ip | ipaddr('address') }}"
+    mask: "{{ item.ip | ipaddr('prefix') }}"
+  with_list: "{{ fabric }}"
   loop_control:
-    label: "{{ item.key }}"
+    label: "{{ item.host }}-{{ item.port }}"
+  when: item.host == inventory_hostname
 
 - name: configure ospf domain 1
   nxos_ospf:
@@ -54,10 +62,13 @@
 - name: configure ospf interface
   nxos_interface_ospf:
     area: 0
-    interface: "{{ item.key }}"
+    interface: "{{ item.port }}"
     ospf: 1
     state: present
-  with_dict: "{{ l3_interfaces }}"
+  with_list: "{{ fabric }}"
+  loop_control:
+    label: "{{ item.host }}-{{ item.port }}"
+  when: item.host == inventory_hostname
   
 - name: set nv overlay to evpn
   nxos_evpn_global:
@@ -70,9 +81,12 @@
   
 - name: configure BGP
   nxos_bgp: 
-    router_id: "{{ l3_interfaces.Loopback0.ip|ipaddr('address')}}"
+    router_id: "{{ item.spine.Loopback0|ipaddr('address')}}"
     asn: 65535
-
+  with_items: "{{ nodes|json_query('[?spine.name==inventory_hostname]')}}"
+  # loop_control:
+    # label: "{{ item.host }}-{{ item.port }}"
+  #when: item.spine.name.value == inventory_hostname
   
 - name: configure ipv4 address-family to advertise evpn
   nxos_bgp_af:

@@ -1,5 +1,5 @@
 ---
-
+    
 - name: configure spines
   hosts: spines
   connection: network_cli
@@ -7,13 +7,13 @@
 
   roles: 
     - nxos
-    - spine
+    # - spine
 
-- name: configure leaves
-  hosts: leaves
-  connection: network_cli
-  gather_facts: no
+# - name: configure leaves
+  # hosts: leaves
+  # connection: network_cli
+  # gather_facts: no
 
-  roles: 
-    - nxos
-    - leaf
+  # roles: 
+    # - nxos
+    # - leaf
