@@ -1,6 +1,6 @@
 ---
 
-- name: gather information
+- name: Validate fabric data model
   hosts: nxos
   connection: network_cli
   gather_facts: no
@@ -37,21 +37,16 @@
     with_dict: "{{ loopbacks[inventory_hostname] }}"
     
            
-  - name: build vni segments list (jsonquery)
+  - name: build vni segments list
     set_fact:
       vni_list_json: "{{ vni_list_json | default({}) | combine({item.key: ({'interfaces': item.value.interfaces[inventory_hostname], 'vlan': item.value.vlan, 'vni': item.value.vni, 'subnet': item.value.subnet}) }) }}"    
     with_dict: "{{ vni_segments }}"
     when: 
       - (item.value.interfaces is defined) and (inventory_hostname in item.value.interfaces)
-    vars:      
-      query: '@'
-      
-  - name: output vni_list_json raw
-    debug:
-      var: vni_list_json
-    when: vni_list_json is defined
+    loop_control:
+      label: "{{ item.key }}"
     
-  - name: get data from vni_list_json
+  - name: list VNIDs
     debug:
       msg:
         - "name: {{ item.key }} "
@@ -62,32 +57,16 @@
     loop_control:
       label: "{{ item.key }}"
     when: vni_list_json is defined
-            
-  # - name: build vni segments list
-    # set_fact:
-      # vni_list: "{{ vni_list | default ([]) }} + [{{ item }}]"
-    # with_dict: "{{ vni_segments }}"
-    # when: 
-      # - (item.value.interfaces is defined) and (inventory_hostname in item.value.interfaces)
-
       
-  - debug:
+  - name: list ethernet interfaces
+    debug:
       var: eth_interfaces
     when: eth_interfaces is defined
     
-  - debug:
+  - name: list loopback interfaces
+    debug:
       var: loop_interfaces
     when: loop_interfaces is defined
-    
-  # - debug:
-      # msg:
-        # - "name: {{ item.key }} "
-        # - "vlan: {{ item.value.vlan }}"
-        # - "vni: {{ item.value.vni}}"
-        # - "interfaces: {{ item.value.interfaces[inventory_hostname] }}"
-    # when: vni_list is defined
-    # loop: "{{ vni_list }}"
-    # loop_control:
-      # label: "{{ item.key }}"
+
 
       
