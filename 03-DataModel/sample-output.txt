@@ -1,0 +1,161 @@
+
+PLAY [Validate fabric data model] *************************************************************
+
+TASK [include vars] ***************************************************************************
+ok: [N9K3]
+ok: [N9K4]
+ok: [N9K5]
+ok: [N9K1]
+ok: [N9K2]
+
+TASK [build left ethernet list] ***************************************************************
+ok: [N9K2] => (item=N9K2 Ethernet1/1<-->Ethernet1/2 N9K3 )
+ok: [N9K2] => (item=N9K2 Ethernet1/2<-->Ethernet1/2 N9K4 )
+ok: [N9K2] => (item=N9K2 Ethernet1/3<-->Ethernet1/2 N9K5 )
+ok: [N9K1] => (item=N9K1 Ethernet1/1<-->Ethernet1/1 N9K3 )
+ok: [N9K1] => (item=N9K1 Ethernet1/2<-->Ethernet1/1 N9K4 )
+ok: [N9K1] => (item=N9K1 Ethernet1/3<-->Ethernet1/1 N9K5 )
+
+TASK [build right ethernet list] **************************************************************
+ok: [N9K3] => (item=N9K1 Ethernet1/1<-->Ethernet1/1 N9K3 )
+ok: [N9K3] => (item=N9K2 Ethernet1/1<-->Ethernet1/2 N9K3 )
+ok: [N9K5] => (item=N9K1 Ethernet1/3<-->Ethernet1/1 N9K5 )
+ok: [N9K5] => (item=N9K2 Ethernet1/3<-->Ethernet1/2 N9K5 )
+ok: [N9K4] => (item=N9K1 Ethernet1/2<-->Ethernet1/1 N9K4 )
+ok: [N9K4] => (item=N9K2 Ethernet1/2<-->Ethernet1/2 N9K4 )
+
+TASK [build loopback list] ********************************************************************
+ok: [N9K3] => (item={'value': u'3.3.3.3/32', 'key': u'Loopback0'})
+ok: [N9K3] => (item={'value': u'10.99.99.3/32', 'key': u'Loopback1'})
+ok: [N9K4] => (item={'value': u'4.4.4.4/32', 'key': u'Loopback0'})
+ok: [N9K4] => (item={'value': u'10.99.99.4/32', 'key': u'Loopback1'})
+ok: [N9K5] => (item={'value': u'5.5.5.5/32', 'key': u'Loopback0'})
+ok: [N9K5] => (item={'value': u'10.99.99.5/32', 'key': u'Loopback1'})
+ok: [N9K1] => (item={'value': u'1.1.1.1/32', 'key': u'Loopback0'})
+ok: [N9K2] => (item={'value': u'2.2.2.2/32', 'key': u'Loopback0'})
+
+TASK [build vni segments list] ****************************************************************
+skipping: [N9K3] => (item=test1) 
+skipping: [N9K4] => (item=test1) 
+skipping: [N9K5] => (item=test1) 
+skipping: [N9K5] => (item=web) 
+skipping: [N9K1] => (item=test1) 
+skipping: [N9K5] => (item=test2) 
+skipping: [N9K1] => (item=web) 
+skipping: [N9K2] => (item=test1) 
+skipping: [N9K1] => (item=test2) 
+skipping: [N9K2] => (item=web) 
+skipping: [N9K2] => (item=test2) 
+ok: [N9K4] => (item=web)
+ok: [N9K4] => (item=test2)
+ok: [N9K3] => (item=web)
+ok: [N9K3] => (item=test2)
+
+TASK [list VNIDs] *****************************************************************************
+skipping: [N9K5]
+skipping: [N9K1]
+skipping: [N9K2]
+ok: [N9K3] => (item=u'test2') => {
+    "msg": [
+        "name: u'test2' ", 
+        "vlan: 60", 
+        "vni: 6000", 
+        "interfaces: [\"u'Ethernet1/7'\"]"
+    ]
+}
+ok: [N9K3] => (item=u'web') => {
+    "msg": [
+        "name: u'web' ", 
+        "vlan: 100", 
+        "vni: 10000", 
+        "interfaces: [\"u'Ethernet1/5'\", \"u'Ethernet1/6'\"]"
+    ]
+}
+ok: [N9K4] => (item=u'test2') => {
+    "msg": [
+        "name: u'test2' ", 
+        "vlan: 60", 
+        "vni: 6000", 
+        "interfaces: [\"u'Ethernet1/7'\"]"
+    ]
+}
+ok: [N9K4] => (item=u'web') => {
+    "msg": [
+        "name: u'web' ", 
+        "vlan: 100", 
+        "vni: 10000", 
+        "interfaces: [\"u'Ethernet1/5'\"]"
+    ]
+}
+
+TASK [list ethernet interfaces] ***************************************************************
+ok: [N9K3] => {
+    "eth_interfaces": {
+        "Ethernet1/1": "10.31.13.3/24", 
+        "Ethernet1/2": "10.31.23.3/24"
+    }
+}
+ok: [N9K4] => {
+    "eth_interfaces": {
+        "Ethernet1/1": "10.31.14.4/24", 
+        "Ethernet1/2": "10.31.24.4/24"
+    }
+}
+ok: [N9K5] => {
+    "eth_interfaces": {
+        "Ethernet1/1": "10.31.15.5/24", 
+        "Ethernet1/2": "10.31.25.5/24"
+    }
+}
+ok: [N9K1] => {
+    "eth_interfaces": {
+        "Ethernet1/1": "10.31.13.1/24", 
+        "Ethernet1/2": "10.31.14.1/24", 
+        "Ethernet1/3": "10.31.15.1/24"
+    }
+}
+ok: [N9K2] => {
+    "eth_interfaces": {
+        "Ethernet1/1": "10.31.23.2/24", 
+        "Ethernet1/2": "10.31.24.2/24", 
+        "Ethernet1/3": "10.31.25.2/24"
+    }
+}
+
+TASK [list loopback interfaces] ***************************************************************
+ok: [N9K3] => {
+    "loop_interfaces": {
+        "Loopback0": "3.3.3.3/32", 
+        "Loopback1": "10.99.99.3/32"
+    }
+}
+ok: [N9K4] => {
+    "loop_interfaces": {
+        "Loopback0": "4.4.4.4/32", 
+        "Loopback1": "10.99.99.4/32"
+    }
+}
+ok: [N9K5] => {
+    "loop_interfaces": {
+        "Loopback0": "5.5.5.5/32", 
+        "Loopback1": "10.99.99.5/32"
+    }
+}
+ok: [N9K1] => {
+    "loop_interfaces": {
+        "Loopback0": "1.1.1.1/32"
+    }
+}
+ok: [N9K2] => {
+    "loop_interfaces": {
+        "Loopback0": "2.2.2.2/32"
+    }
+}
+
+PLAY RECAP ************************************************************************************
+N9K1                       : ok=5    changed=0    unreachable=0    failed=0   
+N9K2                       : ok=5    changed=0    unreachable=0    failed=0   
+N9K3                       : ok=7    changed=0    unreachable=0    failed=0   
+N9K4                       : ok=7    changed=0    unreachable=0    failed=0   
+N9K5                       : ok=5    changed=0    unreachable=0    failed=0   
+
