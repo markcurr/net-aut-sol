@@ -1,0 +1,17 @@
+---
+
+
+- hosts: all
+  connection: local
+  gather_facts: no
+  tasks:
+  - name: Set file prompting to quiet
+    ios_config:
+      lines:
+        - file prompt quiet
+      provider: "{{ cli }} "
+  - name: Copy run start
+    ios_command:
+      commands:
+        - copy run start
+      provider: "{{ cli }}"
