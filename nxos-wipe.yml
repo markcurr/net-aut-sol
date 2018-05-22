@@ -8,4 +8,4 @@
   - name: wipe nxos devices
     nxos_command:
       commands:
-        - rollback running-config checkpoint BLANK
+        - configure replace bootflash:/base-config
