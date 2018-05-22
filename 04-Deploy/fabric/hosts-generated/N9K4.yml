@@ -1,0 +1,3 @@
+l2_interfaces:
+  - Ethernet1/5: 100
+  - Ethernet1/7: 60

@@ -1,0 +1,8 @@
+l2_interfaces:
+{% for k,v in vni_list_json.items() %}
+  {{k}}:
+{% for interface in v['interfaces'] %}
+    interface: {{interface}}
+    vlan: {{v['vlan']}}
+{% endfor %}
+{% endfor %}

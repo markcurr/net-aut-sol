@@ -1,0 +1,177 @@
+---
+
+- name: build vni segments list
+  set_fact:
+    #vni_list_json: "{{ vni_list_json | default({}) | combine({item.key: ({'interfaces': item.value.interfaces[inventory_hostname], 'vlan': item.value.vlan, 'vni': item.value.vni, 'subnet': item.value.subnet}) }) }}"    
+    vni_list_json: "{{ vni_list_json | default({}) | combine({item.key: ({'interfaces': item.value.interfaces[inventory_hostname], 'vlan': item.value.vlan, 'vni': item.value.vni, 'subnet': (item.value.subnet | default ('None')) }) }) }}"  
+  with_dict: "{{ vni_segments }}"
+  when: 
+    - item.value.interfaces is defined
+    - inventory_hostname in item.value.interfaces
+  loop_control:
+    label: "{{ item.key }}"
+    
+- name: build vni subnets list
+  set_fact:
+    subnet_list: "{{ subnet_list | default({}) | combine({item.value.vlan: item.value.subnet}) }}"    
+  with_dict: "{{ vni_segments }}"
+  when: 
+    - item.value.interfaces is defined 
+    - inventory_hostname in item.value.interfaces
+    - item.value.subnet is defined
+  loop_control:
+    label: "{{ item.key }}"
+    
+- name: confirm template directory exists
+  file: 
+    path: 04-Deploy/fabric/hosts-generated 
+    state: directory
+    
+- name: output vni_list_json
+  debug:
+    msg: "{{ vni_list_json }}"
+  when: vni_list_json is defined
+
+- name: create per-node model
+  template: 
+    src: fabric/per-node.j2 
+    dest: "04-Deploy/fabric/hosts-generated/{{inventory_hostname}}.yml"
+  when: vni_list_json is defined
+
+- name: include vars
+  include_vars:
+    file: "fabric/hosts-generated/{{inventory_hostname}}.yml"
+  when: vni_list_json is defined
+  
+- name: output l2_interfaces
+  debug:
+    msg: "{{ l2_interfaces }}"
+  when: l2_interfaces is defined
+  
+- name: enable leaf specific features
+  nxos_feature:
+    state: enabled
+    feature: "{{ item }}"
+  with_list: "{{ leaf_features }}"
+        
+- name: configure VTEP
+  nxos_vxlan_vtep:
+    interface: nve1
+    description: default
+    host_reachability: yes
+    source_interface: loopback1
+    source_interface_hold_down_time: 30
+    shutdown: no
+  
+- name: map VLANs to VNIs
+  nxos_vlan:
+    vlan_id: "{{ item.value.vlan }}"
+    mapped_vni: "{{ item.value.vni }}"
+    name: "{{ item.key }}"
+  with_dict: "{{ vni_list_json | from_yaml }}"
+  when: vni_list_json is defined
+  loop_control:
+    label: "{{ item.value.vlan }}"
+  
+- name: configure anycast MAC
+  nxos_config:
+    lines: fabric forwarding anycast-gateway-mac 1.1.1
+    
+- name: create SVIs
+  nxos_interface:
+    interface: "Vlan{{item.key}}"
+    fabric_forwarding_anycast_gateway: True
+  with_dict: "{{ subnet_list }}"
+  when: 
+    - subnet_list is defined
+  loop_control:
+    label: "Vlan{{item.key}} {{item.value}}"
+
+- name: create SVI ips
+  nxos_ip_interface:
+    interface: "Vlan{{item.key}}"
+    addr: "{{ item.value | ipaddr('address')}}"
+    mask: "{{ item.value | ipaddr('prefix')}}"
+  with_dict: "{{ subnet_list }}"
+  when: 
+    - subnet_list is defined
+  loop_control:
+    label: "vlan: {{item.key}} subnet: {{item.value}}"
+
+- name: vni evpn configuration
+  nxos_evpn_vni:
+    vni: "{{ item.value.vni }}"
+    route_distinguisher: auto
+    route_target_both: auto
+  with_dict: "{{ vni_list_json | from_yaml }}"
+  when: vni_list_json is defined
+  loop_control:
+    label: "{{ item.value.vlan }}"
+  
+    
+- name: map VNI to NVE
+  nxos_vxlan_vtep_vni:
+    interface: nve1
+    vni: "{{ item.value.vni }}"
+    ingress_replication: bgp
+  with_dict: "{{ vni_list_json | from_yaml }}"
+  when: vni_list_json is defined
+  loop_control:
+    label: "{{ item.value.vlan }}"
+  
+- name: configure BGP neighbors
+  nxos_bgp_neighbor:
+    asn: "{{ ASN }}"
+    neighbor: "{{ item }}"
+    remote_as: "{{ ASN }}"
+    update_source: loopback0
+  loop: "{{ loopbacks | json_query('spine.*.Loopback0') }}"
+
+- name: configure BGP neighborships to spine (ipv4)
+  nxos_bgp_neighbor_af:
+    asn: "{{ ASN }}"
+    neighbor: "{{ item }}"
+    afi: ipv4
+    safi: unicast
+    send_community: both
+  loop: "{{ loopbacks | json_query('spine.*.Loopback0') }}"
+  
+- name: configure BGP neighborships to spine (evpn)
+  nxos_bgp_neighbor_af:
+    asn: "{{ ASN }}"
+    neighbor: "{{ item }}"
+    afi: l2vpn
+    safi: evpn
+    send_community: both
+  loop: "{{ loopbacks | json_query('spine.*.Loopback0') }}"
+ 
+- name: set interface to L2 and admin up
+  nxos_interface:
+   admin_state: up
+   interface: "{{ item.key }}"
+   mode: layer2
+   state: present
+  with_dict: "{{ l2_interfaces }}"
+  when: l2_interfaces is defined
+  
+- name: configure l2 switchports
+  nxos_switchport:
+   interface: "{{ item.key }}"
+   mode: access
+   access_vlan: "{{ item.value }}"
+  with_dict: "{{ l2_interfaces }}"
+  when: l2_interfaces is defined
+  
+- name: gather interface information
+  nxos_facts:
+    gather_subset: interfaces
+  register: ints
+  
+- name: loopback1 bugfix
+  nxos_config:
+    lines:
+      - 'shut'
+      - 'no shut'
+    parents:
+      - 'interface loopback1'
+  when: ansible_net_interfaces|json_query('loopback1.state') == 'down'

@@ -16,22 +16,24 @@ fabric:
      
      
 loopbacks:
-  N9K1:
-  - Loopback0: 1.1.1.1/32
-  N9K2:
-  - Loopback0: 2.2.2.2/32
-  N9K3:
-  - Loopback0: 3.3.3.3/32
-  - Loopback1: 10.99.99.3/32
-  N9K4:
-  - Loopback0: 4.4.4.4/32
-  - Loopback1: 10.99.99.4/32
-  N9K5:
-  - Loopback0: 5.5.5.5/32
-  - Loopback1: 10.99.99.5/32
-  
+  spine:
+    N9K1:
+      Loopback0: 1.1.1.1/32
+    N9K2:
+      Loopback0: 2.2.2.2/32
+  leaf:
+    N9K3:
+      Loopback0: 3.3.3.3/32
+      Loopback1: 10.99.99.3/32
+    N9K4:
+      Loopback0: 4.4.4.4/32
+      Loopback1: 10.99.99.4/32
+    N9K5:
+      Loopback0: 5.5.5.5/32
+      Loopback1: 10.99.99.5/32
+ 
 
-      
+ASN: 65535 
 
 nxos_features:
   - ospf

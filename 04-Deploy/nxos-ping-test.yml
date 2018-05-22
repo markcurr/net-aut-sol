@@ -1,0 +1,38 @@
+---
+
+- name: test loopback reachability
+  hosts: nxos
+  connection: network_cli
+  gather_facts: no
+ 
+  
+  tasks: 
+  - name: include variables  
+    include_vars:
+      dir: fabric
+      extensions:
+        - yml
+       
+        
+  - name: build loopback list
+    set_fact:
+      loop_interfaces: "{{ loop_interfaces | default ([]) | union(item) }}"
+    loop: "{{ loopbacks | json_query('*.*.Loopback0') | union ( loopbacks | json_query('*.*.Loopback1') ) }}"
+ 
+      
+
+      
+  - name: ping loopbacks
+    ignore_errors: yes
+    nxos_ping:
+      dest: "{{ item | ipaddr('address') }}"
+    # debug:
+      # msg: 
+        # - "{{item }}"
+    loop: "{{ loop_interfaces }}"
+    loop_control:
+      label: "{{ item | ipaddr('address') }}"
+
+
+   
+

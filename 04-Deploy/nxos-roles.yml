@@ -1,0 +1,41 @@
+---
+
+- name: include vars
+  hosts: nxos
+  connection: network_cli
+  gather_facts: no
+  
+  tasks:
+  
+  - name: include evpn-fabric.yml
+    include_vars:
+      file: fabric/evpn-fabric.yml
+
+  - name: include vni-segments.yml
+    include_vars:
+      file: fabric/vni-segments.yml
+        
+- name: configure nxos
+  hosts: nxos
+  connection: network_cli
+  gather_facts: no
+
+  roles: 
+    - nxos
+
+  
+- name: configure spines
+  hosts: spines
+  connection: network_cli
+  gather_facts: no
+
+  roles: 
+    - spine
+
+- name: configure leaves
+  hosts: leaves
+  connection: network_cli
+  gather_facts: no
+
+  roles: 
+    - leaf
