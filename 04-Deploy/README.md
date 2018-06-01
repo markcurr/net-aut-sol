@@ -36,7 +36,8 @@ The nxos_roles.yml file generates per-node models, then deploys the configuratio
 **spine/tasks/main.yml** - configures BGP peerings to Leaves
 
 **leaf/tasks/main.yml** - configures BGP peerings to spine, VTEP, SVIs, and VNI and VLANs (where applicable)
-  Note - there is a bug in VTEP configuration which requires the loopback interface to be shut/no shut after VTEP binding. I have included a play to check for and fix this issue.
+
+(Note - there is a bug in VTEP configuration which requires the loopback interface to be shut/no shut after VTEP binding. I have included a play to check for and fix this issue.)
 
 **validate_fabric.yml** - this collects desired and actual state of LLDP, OSPF and BGP adjacencies and confirms they match using 'assert' modules
   
