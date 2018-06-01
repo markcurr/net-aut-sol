@@ -33,7 +33,7 @@ This template generates a per-node model to determine which state applies to the
                   
 ## Deployment via nxos-modules
 
-The nxos_roles.yml file generates per-node models, then deploys the configuration using roles, and finally validates the fabric:
+The **nxos_roles.yml** file generates per-node models, then deploys the configuration using roles, and finally validates the fabric:
 
 **nxos/tasks/main.yml** - this sets common configuration like Loopback, OSPF and Ethernet Layer 3 configuration
 
