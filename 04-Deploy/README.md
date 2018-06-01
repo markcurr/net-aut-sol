@@ -25,6 +25,10 @@ This file contains
 
 This file describes the VNIDs present in the network, mapped VLANs and which switch and interface they are present on. The playbooks can then use this to determine which node to apply a VNI/VLAN/Subnet conf
 iguration to dependent on end port.
+
+### fabric/per-node.j2
+
+This template generates a per-node model to determine which state applies to the node we are executing on, for example if a VNI segment does not have a port on the current node, its model will not contain configuration for this segment.
                                                                           
                   
 ## Deployment via nxos-modules
