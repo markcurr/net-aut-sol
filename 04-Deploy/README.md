@@ -32,7 +32,9 @@ iguration to dependent on end port.
 The nxos_roles.yml file generates per-node models, then deploys the configuration using roles, and finally validates the fabric:
 
 **nxos/tasks/main.yml** - this sets common configuration like Loopback, OSPF and Ethernet Layer 3 configuration
+
 **spine/tasks/main.yml** - configures BGP peerings to Leaves
+
 **leaf/tasks/main.yml** - configures BGP peerings to spine, VTEP, SVIs, and VNI and VLANs (where applicable)
   Note - there is a bug in VTEP configuration which requires the loopback interface to be shut/no shut after VTEP binding. I have included a play to check for and fix this issue.
 
