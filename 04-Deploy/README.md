@@ -39,11 +39,13 @@ The nxos_roles.yml file generates per-node models, then deploys the configuratio
   Note - there is a bug in VTEP configuration which requires the loopback interface to be shut/no shut after VTEP binding. I have included a play to check for and fix this issue.
 
 **validate_fabric.yml** - this collects desired and actual state of LLDP, OSPF and BGP adjacencies and confirms they match using 'assert' modules
-  Note - I found an issue where trying to run nxos_facts on more than 4 N9Ks at once causes a failure; therefore I run this module with serial: 3
+  
+(Note - I found an issue where trying to run nxos_facts on more than 4 N9Ks at once causes a failure; therefore I run this module with serial: 3)
   
 ## Deployment via configuration replace - in development
 
 **replace-config.yml** - this playbook generates a per-node configuration using **leaf-config.j2** and **spine-config.j2**
+
 
 Config generation works fairly well however actually getting the files onto the Nexus is slightly more complicated, and the devices are quite particular about the format of the config replace. Therefore this is still in development.
 
