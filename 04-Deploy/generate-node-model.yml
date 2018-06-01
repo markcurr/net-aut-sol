@@ -1,0 +1,40 @@
+---
+- name: include vars
+  hosts: nxos
+  connection: network_cli
+  gather_facts: no
+  
+  tasks:
+  
+  - name: include evpn-fabric.yml
+    include_vars:
+      file: fabric/evpn-fabric.yml
+
+  - name: include vni-segments.yml
+    include_vars:
+      file: fabric/vni-segments.yml
+      
+  - name: delete any existing output
+    file: 
+      path: "{{ item }}" 
+      state: absent
+    with_fileglob: "fabric/hosts-generated/model/{{inventory_hostname}}-model.yml"
+
+  - name: create per-node model
+    template: 
+      src: fabric/per-node.j2 
+      dest: "04-Deploy/fabric/hosts-generated/model/{{inventory_hostname}}-model.yml"
+      trim_blocks: yes
+      
+  - name: include vars
+    include_vars:
+      file: "fabric/hosts-generated/model/{{inventory_hostname}-model.yml"
+    
+  - name: output values
+    debug:
+      msg: 
+        - eth_interfaces: "{{ eth_interfaces }}"
+        - loop_interfaces: "{{ loop_interfaces }}"
+        - vni_list: "{{ vni_list | default ('undefined') }}"
+        - l2_interfaces: "{{ l2_interfaces | default ('undefined') }}"
+        - subnet_list: "{{ subnet_list | default ('undefined') }}"

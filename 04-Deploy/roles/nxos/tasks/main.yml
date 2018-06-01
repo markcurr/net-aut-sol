@@ -7,33 +7,6 @@
     feature: "{{ item }}"
   with_list: "{{ nxos_features }}"
   
-- name: build left ethernet list
-  set_fact: 
-    eth_interfaces: "{{ eth_interfaces | default({}) | combine({ item.left_port: item.left_ip }) }}"
-  loop: "{{ fabric|json_query(query) }}"
-  vars: 
-    query: '@[?left==`{{inventory_hostname}}`]'
-  loop_control: 
-    label: "{{item.left}} {{item.left_port}}<-->{{item.right_port}} {{item.right}} "
-  
-- name: build right ethernet list
-  set_fact: 
-    eth_interfaces: "{{ eth_interfaces | default({}) | combine({ item.right_port: item.right_ip }) }}"
-  loop: "{{ fabric|json_query(query) }}"
-  vars: 
-    query: '@[?right==`{{inventory_hostname}}`]'
-  loop_control: 
-    label: "{{item.left}} {{item.left_port}}<-->{{item.right_port}} {{item.right}} "
-  
-
-- name: build local loopback list
-  set_fact:
-    loop_interfaces: "{{ loop_interfaces | default([]) | combine (item) }}"
-  loop: "{{ loopbacks | json_query(jquery) }}"
-  vars:
-    jquery: '*.{{inventory_hostname}}'
-
- 
 - name: admin up ethernet interfaces
   nxos_interface:
    admin_state: up
@@ -53,23 +26,23 @@
   loop_control: 
     label: "{{ item.key }}" 
     
-- name: ethernet L3 interface configuration
+- name: L3 interface configuration
   nxos_ip_interface:
     interface: "{{ item.key }}"
     addr: "{{ item.value| ipaddr('address') }}"
     mask: "{{ item.value | ipaddr('prefix') }}"
-  with_dict: "{{ eth_interfaces }}"
+  with_dict: "{{ eth_interfaces | combine(loop_interfaces)}}"
   loop_control:
     label: "{{ item.key }} : {{ item.value }}"
     
-- name: loopback L3 configuration
-  nxos_ip_interface:
-    interface: "{{ item.key }}"
-    addr: "{{ item.value| ipaddr('address') }}"
-    mask: "{{ item.value | ipaddr('prefix') }}"
-  with_dict: "{{ loop_interfaces }}"
-  loop_control:
-    label: "{{ item.key }} : {{ item.value }}"
+# - name: loopback L3 configuration
+  # nxos_ip_interface:
+    # interface: "{{ item.key }}"
+    # addr: "{{ item.value| ipaddr('address') }}"
+    # mask: "{{ item.value | ipaddr('prefix') }}"
+  # with_dict: "{{ loop_interfaces }}"
+  # loop_control:
+    # label: "{{ item.key }} : {{ item.value }}"
     
 - name: configure ospf domain 1
   nxos_ospf:

@@ -1,6 +1,62 @@
-l2_interfaces:
-{% for k,v in vni_list_json.iteritems() %}
-{% for interface in v['interfaces'] %}
-  - {{interface}}: {{v['vlan']}}
+hostname: {{inventory_hostname}}
+eth_interfaces:
+{% for link in fabric %}
+{% if link['left'] == inventory_hostname %}
+  {{link['left_port']}}: {{link['left_ip']}}
+{% elif link['right'] == inventory_hostname %}
+  {{link['right_port']}}: {{link['right_ip']}}
+{% endif %}
 {% endfor %}
+
+
+loop_interfaces:
+{% set loopback_query = '*.' + inventory_hostname %}
+{% for item in (loopbacks | json_query(loopback_query)) %}
+{% for link,ip in item.iteritems() %}
+  {{link}}: {{ip}}
+{% endfor %}
+{% endfor %}
+
+{% set vni_query = '*.interfaces.' + inventory_hostname %}
+{% if vni_segments | json_query(vni_query) %}
+vni_list:
+{% endif %}
+{% for k,v in vni_segments.iteritems() %} 
+{% if v.interfaces is defined %}
+{% if v.interfaces[inventory_hostname] is defined %}
+  {{k}}:
+    interfaces: 
+{% for interface in v.interfaces[inventory_hostname] %}
+      - {{interface}}
+{% endfor %}
+{% if v.subnet is defined %}
+    subnet: {{v.subnet}}
+{% endif %}
+    vlan: {{v.vlan}}
+    vni: {{v.vni}}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+{% if vni_segments | json_query(vni_query) %}
+subnet_list:
+{% endif %}
+{% for k,v in vni_segments.iteritems() %} 
+{% if v.interfaces is defined %}
+{% if v.interfaces[inventory_hostname] is defined and v.subnet is defined %}
+  {{v.vlan}}: {{v.subnet}}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% if vni_segments | json_query(vni_query) %}
+l2_interfaces:
+{% endif %}
+{% for k,v in vni_segments.iteritems() %} 
+{% if v.interfaces is defined %}
+{% if v.interfaces[inventory_hostname] is defined %}
+{% for interface in v.interfaces[inventory_hostname] %}
+  - {{interface}}: {{v.vlan}}
+{% endfor %}
+{% endif %}
+{% endif %}
 {% endfor %}

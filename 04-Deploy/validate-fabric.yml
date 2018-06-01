@@ -1,0 +1,135 @@
+---
+
+# - name: validate fabric state
+  # hosts: nxos
+  # connection: network_cli
+  # gather_facts: no
+  # serial: 3
+  
+  # tasks: 
+    # - name: include evpn-fabric.yml
+      # include_vars:
+        # file: fabric/evpn-fabric.yml
+        
+        
+    - name: gather nxos facts
+      nxos_facts:
+        gather_subset: interfaces
+             
+          
+    - name: build loopback list
+      set_fact:
+        test_loopbacks: "{{ test_loopbacks | default ([]) | union(item) }}"
+      loop: "{{ loopbacks | json_query('*.*.Loopback0') | union ( loopbacks | json_query('*.*.Loopback1') ) }}"
+          
+
+    - name: get desired OSPF/LLDP neighbors (left)
+      set_fact: 
+        desired_neighbors: "{{ desired_neighbors | default({}) | combine({  item.left_port: ({'neighbor': item.right, 'r_port': item.right_port, 'remote_ip': (item.right_ip | ipaddr('address')) }) })  }}"
+      loop: "{{ fabric|json_query(query) }}"
+      vars: 
+        query: '@[?left==`{{inventory_hostname}}`]'
+      loop_control: 
+        label: "{{item.left}} {{item.left_port}}<-->{{item.right_port}} {{item.right}} "
+  
+    - name: get desired OSPF/LLDP neighbors (right)
+      set_fact: 
+        desired_neighbors: "{{ desired_neighbors | default({}) | combine({ item.right_port: ({'neighbor': item.left, 'r_port': item.left_port, 'remote_ip': (item.left_ip | ipaddr('address'))}) })  }}"
+      loop: "{{ fabric|json_query(query) }}"
+      vars: 
+        query: '@[?right==`{{inventory_hostname}}`]'
+      loop_control: 
+        label: "{{item.left}} {{item.left_port}}<-->{{item.right_port}} {{item.right}} "
+        
+    - name: set desired BGP neighbors (spine)
+      set_fact: 
+        desired_bgp_neighbors: "{{ desired_bgp_neighbors | default ({}) | combine ({ (item | ipaddr('address')): 'Established' }) }} "
+      with_items: "{{ loopbacks | json_query('leaf.*.Loopback0') }}"
+      when: '"spines" in group_names'
+      loop_control:
+        label: "{{ item }}"    
+ 
+    - name: set desired BGP neighbors (leaf)
+      set_fact: 
+        desired_bgp_neighbors: "{{  desired_bgp_neighbors | default ({}) | combine ({ (item | ipaddr('address')): 'Established' }) }}"
+      with_items: "{{ loopbacks | json_query('spine.*.Loopback0') }}"
+      when: '"leaves" in group_names'
+      loop_control:
+        label: "{{ item }}"
+     
+    - name: set actual LLDP neighbors
+      set_fact:
+        actual_lldp_neighbors: "{{ actual_lldp_neighbors | default ({}) | combine ({ item.key: ({'r_port': item.value[0].port, 'neighbor': item.value[0].sysname.split('(')[0]}) }) }}"  
+      with_dict: "{{ ansible_net_neighbors }}"  
+      when: item.key != 'mgmt0'   
+      loop_control:
+        label: "{{ item.key }}"
+        
+
+
+    - name: get actual OSPF neighbors
+      nxos_command:
+        commands:
+        - command: show ip ospf neighbor
+          output: json
+      register: ospf_neighbor
+      
+ 
+    - name: set actual OSPF neighbors
+      set_fact:
+        actual_ospf_neighbors: "{{ actual_ospf_neighbors | default ({}) | combine ({ ('Ethernet' + item.intf.split('Eth')[1]): ({'state': item.state, 'remote_ip': item.addr }) }) }}" 
+      with_items: "{{ ospf_neighbor.stdout[0].TABLE_ctx.ROW_ctx.TABLE_nbr.ROW_nbr }}"
+      loop_control:
+        label: "{{ item.rid }}"
+ 
+    - name: get actual BGP neighbors
+      nxos_command:
+        commands:
+        - command: show bgp l2vpn evpn summary
+          output: json
+      register: bgp_neighbor
+     
+     
+    - name: set actual bgp neighbors
+      set_fact:
+        actual_bgp_neighbors: "{{ actual_bgp_neighbors | default ({}) | combine ({ item.neighborid: item.state }) }}"
+      with_items: "{{ bgp_neighbor.stdout[0].TABLE_vrf.ROW_vrf.TABLE_af.ROW_af.TABLE_saf.ROW_saf.TABLE_neighbor.ROW_neighbor }}"
+      loop_control:
+        label: "{{ item.neighborid }}"
+        
+
+
+   
+    - name: check LLDP neighbors
+      assert:
+        that: 
+          - "{{ item.value.neighbor == actual_lldp_neighbors[item.key].neighbor }}"
+          - "{{ item.value.r_port == actual_lldp_neighbors[item.key].r_port }}"
+      with_dict: "{{ desired_neighbors }}"
+      loop_control:
+        label: "{{ item.key }}"
+
+    - name: check OSPF neighbors
+      assert:
+        that:
+          - "{{ item.value.remote_ip == actual_ospf_neighbors[item.key].remote_ip }}"
+          - "{{ actual_ospf_neighbors[item.key].state == 'FULL' }}"
+      with_dict: "{{ desired_neighbors }}"
+      loop_control:
+        label: "{{ item.key }}"
+
+    - name: check BGP neighbors
+      assert:
+        that: 
+          - "{{item.value == actual_bgp_neighbors[item.key] }}"
+      with_dict: "{{ desired_bgp_neighbors }}"
+      loop_control:
+        label: "{{ item.key }}"
+        
+    - name: ping loopbacks
+      ignore_errors: yes
+      nxos_ping:
+        dest: "{{ item | ipaddr('address') }}"
+      loop: "{{ test_loopbacks }}"
+      loop_control:
+        label: "{{ item | ipaddr('address') }}"

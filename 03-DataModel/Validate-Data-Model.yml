@@ -1,7 +1,7 @@
 ---
 
 - name: Validate fabric data model
-  hosts: nxos
+  hosts: N9K3
   connection: network_cli
   gather_facts: no
 
@@ -12,61 +12,123 @@
       dir: fabric
       extensions:
         - yml
+        
       
-  - name: build left ethernet list
-    set_fact: 
-      eth_interfaces: "{{ eth_interfaces | default({}) | combine({ item.left_port: item.left_ip }) }}"
-    loop: "{{ fabric|json_query(query) }}"
-    vars: 
-      query: '@[?left==`{{inventory_hostname}}`]'
-    loop_control: 
-      label: "{{item.left}} {{item.left_port}}<-->{{item.right_port}} {{item.right}} "
+  # - name: build left ethernet list
+    # set_fact: 
+      # eth_interfaces: "{{ eth_interfaces | default({}) | combine({ item.left_port: item.left_ip }) }}"
+    # loop: "{{ fabric|json_query(query) }}"
+    # vars: 
+      # query: '@[?left==`{{inventory_hostname}}`]'
+    # loop_control: 
+      # label: "{{item.left}} {{item.left_port}}<-->{{item.right_port}} {{item.right}} "
     
-  - name: build right ethernet list
-    set_fact: 
-      eth_interfaces: "{{ eth_interfaces | default({}) | combine({ item.right_port: item.right_ip }) }}"
-    loop: "{{ fabric|json_query(query) }}"
-    vars: 
-      query: '@[?right==`{{inventory_hostname}}`]'
-    loop_control: 
-      label: "{{item.left}} {{item.left_port}}<-->{{item.right_port}} {{item.right}} "
+  # - name: build right ethernet list
+    # set_fact: 
+      # eth_interfaces: "{{ eth_interfaces | default({}) | combine({ item.right_port: item.right_ip }) }}"
+    # loop: "{{ fabric|json_query(query) }}"
+    # vars: 
+      # query: '@[?right==`{{inventory_hostname}}`]'
+    # loop_control: 
+      # label: "{{item.left}} {{item.left_port}}<-->{{item.right_port}} {{item.right}} "
     
-  - name: build loopback list
-    set_fact:
-      loop_interfaces: "{{ loop_interfaces | default({}) | combine ({ item.key: item.value }) }}"
-    with_dict: "{{ loopbacks[inventory_hostname] }}"
-    
+  # - name: build loopback list
+    # set_fact:
+      # loop_interfaces: "{{ loop_interfaces | default({}) | combine ({ item.key: item.value }) }}"
+    # with_dict: "{{ loopbacks[inventory_hostname] }}"
+   
            
-  - name: build vni segments list
-    set_fact:
-      vni_list_json: "{{ vni_list_json | default({}) | combine({item.key: ({'interfaces': item.value.interfaces[inventory_hostname], 'vlan': item.value.vlan, 'vni': item.value.vni, 'subnet': item.value.subnet}) }) }}"    
-    with_dict: "{{ vni_segments }}"
-    when: 
-      - (item.value.interfaces is defined) and (inventory_hostname in item.value.interfaces)
-    loop_control:
-      label: "{{ item.key }}"
-    
-  - name: list VNIDs
-    debug:
-      msg:
-        - "name: {{ item.key }} "
-        - "vlan: {{ item.value.vlan }}"
-        - "vni: {{ item.value.vni}}"
-        - "interfaces: {{ item.value.interfaces }}"
-    with_dict: "{{ vni_list_json | from_yaml }}"
-    loop_control:
-      label: "{{ item.key }}"
-    when: vni_list_json is defined
+  # - name: build vni segments list
+    # set_fact:
+      # vni_list_json: "{{ vni_list_json | default({}) | combine({item.key: ({'interfaces': item.value.interfaces[inventory_hostname], 'vlan': item.value.vlan, 'vni': item.value.vni, 'subnet': item.value.subnet}) }) }}"    
+    # with_dict: "{{ vni_segments }}"
+    # when: 
+      # - (item.value.interfaces is defined) and (inventory_hostname in item.value.interfaces)
+    # loop_control:
+      # label: "{{ item.key }}"
       
-  - name: list ethernet interfaces
+  # - name: build vni subnets list
+    # set_fact:
+      # subnet_list: "{{ subnet_list | default({}) | combine({item.value.vlan: item.value.subnet}) }}"    
+    # with_dict: "{{ vni_segments }}"
+    # when: 
+      # - item.value.interfaces is defined 
+      # - inventory_hostname in item.value.interfaces
+      # - item.value.subnet is defined
+    # loop_control:
+      # label: "{{ item.key }}"
+      
+  - name: set jquery
+    set_fact:
+      query: '*.{interfaces: (interfaces.{{inventory_hostname}}:  vlan)}'
+  
+  - name: l2_interfaces list
+    # set_fact:
+      # l2_interfaces: "{{ l2_interfaces | default({}) | combine({item.value.vlan: item.value.interfaces[inventory_hostname]}) }}"    
     debug:
-      var: eth_interfaces
-    when: eth_interfaces is defined
+      msg: 
+        - "{{ vni_segments | json_query(query) }}"
+        # - "{{ item.value.interfaces }}"
+        # - "{{ item.value.vlan }}"
+    #with_dict: "{{ vni_segments | json_query(query) }}"
+    #with_dict: "{{ vni_list_json | from_yaml }}"
+
+  # for key in vni_segments:
+    # create/combine list with interface as key
+
+      
+  - name: L2 interfaces
+    debug:
+      msg: 
+        - "{{ item }}"
+    when: l2_interfaces is defined
+    with_dict: "{{ l2_interfaces }}"
+
+    #| json_query('*.interfaces[*]')
+      
+
+  # - name: list ethernet interfaces
+    # debug:
+      # var: eth_interfaces
+    # when: eth_interfaces is defined
     
-  - name: list loopback interfaces
-    debug:
-      var: loop_interfaces
-    when: loop_interfaces is defined
+  # - name: list loopback interfaces
+    # debug:
+      # var: loop_interfaces
+    # when: loop_interfaces is defined
+    # loop_control:
+      # label: "vlan: {{item.key}} subnet: {{item.value}}"
+    
+  # - name: output subnet_list
+    # debug:
+      # msg: 
+        # - "vlan: {{ item.key }}"
+        # - "addr: {{ item.value | ipaddr('address') }}"
+        # - "prefix: {{ item.value | ipaddr('prefix') }}"
+    # when: subnet_list is defined
+    # with_dict: "{{ subnet_list }}"
+    
+  # - name: output vni_list_json
+    # debug: 
+      # var: vni_list_json | from_yaml
+    # when: vni_list_json is defined
+    
+  # - name: list VNIDs
+    # debug:
+      # msg:
+        # - "name: {{ item.key }} "
+        # - "vlan: {{ item.value.vlan }}"
+        # - "vni: {{ item.value.vni }}"
+        # - "subnet: {{ item.value.subnet }}"
+        # - "address: {{ item.value.subnet | ipaddr('address') }}"
+        # - "prefix: {{ item.value.subnet | ipaddr('prefix') }}"
+        # - "interfaces: {{ item.value.interfaces }}"
+    # with_dict: "{{ vni_list_json | from_yaml }}"
+    # loop_control:
+      # label: "{{ item.key }}"
+    # when: vni_list_json is defined
+    
+    
 
 
       

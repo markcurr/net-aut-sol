@@ -1,53 +1,6 @@
 ---
 
-- name: build vni segments list
-  set_fact:
-    #vni_list_json: "{{ vni_list_json | default({}) | combine({item.key: ({'interfaces': item.value.interfaces[inventory_hostname], 'vlan': item.value.vlan, 'vni': item.value.vni, 'subnet': item.value.subnet}) }) }}"    
-    vni_list_json: "{{ vni_list_json | default({}) | combine({item.key: ({'interfaces': item.value.interfaces[inventory_hostname], 'vlan': item.value.vlan, 'vni': item.value.vni, 'subnet': (item.value.subnet | default ('None')) }) }) }}"  
-  with_dict: "{{ vni_segments }}"
-  when: 
-    - item.value.interfaces is defined
-    - inventory_hostname in item.value.interfaces
-  loop_control:
-    label: "{{ item.key }}"
-    
-- name: build vni subnets list
-  set_fact:
-    subnet_list: "{{ subnet_list | default({}) | combine({item.value.vlan: item.value.subnet}) }}"    
-  with_dict: "{{ vni_segments }}"
-  when: 
-    - item.value.interfaces is defined 
-    - inventory_hostname in item.value.interfaces
-    - item.value.subnet is defined
-  loop_control:
-    label: "{{ item.key }}"
-    
-- name: confirm template directory exists
-  file: 
-    path: 04-Deploy/fabric/hosts-generated 
-    state: directory
-    
-- name: output vni_list_json
-  debug:
-    msg: "{{ vni_list_json }}"
-  when: vni_list_json is defined
 
-- name: create per-node model
-  template: 
-    src: fabric/per-node.j2 
-    dest: "04-Deploy/fabric/hosts-generated/{{inventory_hostname}}.yml"
-  when: vni_list_json is defined
-
-- name: include vars
-  include_vars:
-    file: "fabric/hosts-generated/{{inventory_hostname}}.yml"
-  when: vni_list_json is defined
-  
-- name: output l2_interfaces
-  debug:
-    msg: "{{ l2_interfaces }}"
-  when: l2_interfaces is defined
-  
 - name: enable leaf specific features
   nxos_feature:
     state: enabled
@@ -68,8 +21,8 @@
     vlan_id: "{{ item.value.vlan }}"
     mapped_vni: "{{ item.value.vni }}"
     name: "{{ item.key }}"
-  with_dict: "{{ vni_list_json | from_yaml }}"
-  when: vni_list_json is defined
+  with_dict: "{{ vni_list  | json_query('@') }}"
+  when: vni_list is defined
   loop_control:
     label: "{{ item.value.vlan }}"
   
@@ -81,7 +34,7 @@
   nxos_interface:
     interface: "Vlan{{item.key}}"
     fabric_forwarding_anycast_gateway: True
-  with_dict: "{{ subnet_list }}"
+  with_dict: "{{ subnet_list | json_query('@') }}" 
   when: 
     - subnet_list is defined
   loop_control:
@@ -92,7 +45,7 @@
     interface: "Vlan{{item.key}}"
     addr: "{{ item.value | ipaddr('address')}}"
     mask: "{{ item.value | ipaddr('prefix')}}"
-  with_dict: "{{ subnet_list }}"
+  with_dict: "{{ subnet_list | json_query('@') }}" 
   when: 
     - subnet_list is defined
   loop_control:
@@ -103,8 +56,8 @@
     vni: "{{ item.value.vni }}"
     route_distinguisher: auto
     route_target_both: auto
-  with_dict: "{{ vni_list_json | from_yaml }}"
-  when: vni_list_json is defined
+  with_dict: "{{ vni_list  | json_query('@') }}"
+  when: vni_list is defined
   loop_control:
     label: "{{ item.value.vlan }}"
   
@@ -114,8 +67,8 @@
     interface: nve1
     vni: "{{ item.value.vni }}"
     ingress_replication: bgp
-  with_dict: "{{ vni_list_json | from_yaml }}"
-  when: vni_list_json is defined
+  with_dict: "{{ vni_list  | json_query('@') }}"
+  when: vni_list is defined
   loop_control:
     label: "{{ item.value.vlan }}"
   
@@ -151,7 +104,7 @@
    interface: "{{ item.key }}"
    mode: layer2
    state: present
-  with_dict: "{{ l2_interfaces }}"
+  with_dict: "{{ l2_interfaces  | json_query('@') }}"
   when: l2_interfaces is defined
   
 - name: configure l2 switchports
@@ -159,7 +112,7 @@
    interface: "{{ item.key }}"
    mode: access
    access_vlan: "{{ item.value }}"
-  with_dict: "{{ l2_interfaces }}"
+  with_dict: "{{ l2_interfaces  | json_query('@') }}"
   when: l2_interfaces is defined
   
 - name: gather interface information

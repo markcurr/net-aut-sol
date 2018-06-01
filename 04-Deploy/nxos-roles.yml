@@ -1,6 +1,6 @@
 ---
 
-- name: include vars
+- name: generate node values
   hosts: nxos
   connection: network_cli
   gather_facts: no
@@ -14,6 +14,22 @@
   - name: include vni-segments.yml
     include_vars:
       file: fabric/vni-segments.yml
+      
+  - name: delete any existing files
+    file: 
+      path: "{{ item }}" 
+      state: absent
+    with_fileglob: "fabric/hosts-generated/{{inventory_hostname}}-model.yml"
+      
+  - name: create per-node model
+    template: 
+      src: fabric/per-node.j2 
+      dest: "04-Deploy/fabric/hosts-generated/{{inventory_hostname}}-model.yml"
+      trim_blocks: yes
+      
+  - name: include generated values
+    include_vars:
+      file: "fabric/hosts-generated/{{inventory_hostname}}-model.yml"
         
 - name: configure nxos
   hosts: nxos
@@ -39,3 +55,13 @@
 
   roles: 
     - leaf
+    
+- name: validate deployment
+  hosts: nxos
+  connection: network_cli
+  gather_facts: no
+  serial: 3
+  
+  tasks:
+    - name: include validate-fabric.yml
+      include: validate-fabric.yml

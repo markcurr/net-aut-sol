@@ -1,0 +1,54 @@
+hostname {{inventory_hostname}}
+
+nv overlay evpn
+{% for feature in nxos_features %}
+feature {{feature}}
+{% endfor %}
+
+username admin password 5 $5$ONBONO$H9ywqAegWI1t/6Jyl8et97iH.vdPt/Fn8cx/LkaDVfB  role network-admin
+username ansible password 5 $5$BIJHJC$TxGq.40zAdNyi7klQ72VurBHAyajilLXb3iFvAhiVd8  role network-admin
+
+snmp-server user admin network-admin auth md5 0xf5b22989159e510281a8c90e8ad02dae priv 0xf5b22989159e510281a8c90e8ad02dae localizedkey
+snmp-server user ansible network-admin auth md5 0xb2f4fe7433440a238ee49b4da1bee0c7 priv 0xb2f4fe7433440a238ee49b4da1bee0c7 localizedkey
+snmp-server user admin auth md5 0xf5b22989159e510281a8c90e8ad02dae priv 0xf5b22989159e510281a8c90e8ad02dae localizedkey engineID 128:0:0:9
+:3:0:12:41:112:2:148
+snmp-server user ansible auth md5 0xb2f4fe7433440a238ee49b4da1bee0c7 priv 0xb2f4fe7433440a238ee49b4da1bee0c7 localizedkey engineID 128:0:0
+:9:3:0:12:41:112:2:148
+
+vlan 1
+
+vrf context overlay
+
+{% for interface,value in eth_interfaces.iteritems() %}
+interface {{interface}}
+  no switchport
+  ip address {{value}}
+  ip router ospf 1 area 0.0.0.0
+  no shutdown
+  
+{% endfor %}
+
+{% for interface,value in loop_interfaces.iteritems() %}
+interface {{interface}}
+  ip address {{value}}
+  ip router ospf 1 area 0.0.0.0
+  no shutdown
+  
+{% endfor %}
+
+router ospf 1
+
+router bgp {{ASN}}
+  router-id {{ loop_interfaces['Loopback0'] | ipaddr('address') }}
+{% for neighbor in loopbacks | json_query('leaf.*.Loopback0') %}
+  neighbor {{neighbor}}
+    remote-as 65535
+    update-source loopback0
+    address-family ipv4 unicast
+      send-community
+      send-community extended
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+{% endfor %}     
+      

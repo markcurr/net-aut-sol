@@ -38,6 +38,7 @@ ASN: 65535
 nxos_features:
   - ospf
   - bgp
+  - lldp
   
 leaf_features:
   - hsrp

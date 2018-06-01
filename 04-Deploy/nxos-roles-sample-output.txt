@@ -1,0 +1,907 @@
+
+PLAY [generate node values] **********************************************************************************************************************************************************************************
+
+TASK [include evpn-fabric.yml] *******************************************************************************************************************************************************************************
+ok: [N9K1]
+ok: [N9K2]
+ok: [N9K3]
+ok: [N9K4]
+ok: [N9K5]
+
+TASK [include vni-segments.yml] ******************************************************************************************************************************************************************************
+ok: [N9K1]
+ok: [N9K2]
+ok: [N9K3]
+ok: [N9K4]
+ok: [N9K5]
+
+TASK [delete any existing files] *****************************************************************************************************************************************************************************
+changed: [N9K3] => (item=/home/mark/net-aut-sol/04-Deploy/fabric/hosts-generated/N9K3-model.yml)
+changed: [N9K2] => (item=/home/mark/net-aut-sol/04-Deploy/fabric/hosts-generated/N9K2-model.yml)
+changed: [N9K4] => (item=/home/mark/net-aut-sol/04-Deploy/fabric/hosts-generated/N9K4-model.yml)
+changed: [N9K5] => (item=/home/mark/net-aut-sol/04-Deploy/fabric/hosts-generated/N9K5-model.yml)
+changed: [N9K1] => (item=/home/mark/net-aut-sol/04-Deploy/fabric/hosts-generated/N9K1-model.yml)
+
+TASK [create per-node model] *********************************************************************************************************************************************************************************
+changed: [N9K1]
+changed: [N9K3]
+changed: [N9K5]
+changed: [N9K2]
+changed: [N9K4]
+
+TASK [include generated values] ******************************************************************************************************************************************************************************
+ok: [N9K1]
+ok: [N9K2]
+ok: [N9K3]
+ok: [N9K4]
+ok: [N9K5]
+
+PLAY [configure nxos] ****************************************************************************************************************************************************************************************
+
+TASK [nxos : enable shared nxos features] ********************************************************************************************************************************************************************
+changed: [N9K4] => (item=ospf)
+changed: [N9K5] => (item=ospf)
+changed: [N9K3] => (item=ospf)
+changed: [N9K2] => (item=ospf)
+changed: [N9K1] => (item=ospf)
+changed: [N9K4] => (item=bgp)
+changed: [N9K5] => (item=bgp)
+changed: [N9K3] => (item=bgp)
+changed: [N9K1] => (item=bgp)
+changed: [N9K2] => (item=bgp)
+changed: [N9K4] => (item=lldp)
+changed: [N9K5] => (item=lldp)
+changed: [N9K3] => (item=lldp)
+changed: [N9K1] => (item=lldp)
+changed: [N9K2] => (item=lldp)
+
+TASK [nxos : admin up ethernet interfaces] *******************************************************************************************************************************************************************
+changed: [N9K1] => (item=Ethernet1/1)
+changed: [N9K2] => (item=Ethernet1/1)
+changed: [N9K3] => (item=Ethernet1/1)
+changed: [N9K4] => (item=Ethernet1/1)
+changed: [N9K5] => (item=Ethernet1/1)
+changed: [N9K2] => (item=Ethernet1/2)
+changed: [N9K3] => (item=Ethernet1/2)
+changed: [N9K1] => (item=Ethernet1/2)
+changed: [N9K4] => (item=Ethernet1/2)
+changed: [N9K5] => (item=Ethernet1/2)
+changed: [N9K2] => (item=Ethernet1/3)
+changed: [N9K1] => (item=Ethernet1/3)
+
+TASK [nxos : admin up loopback interfaces] *******************************************************************************************************************************************************************
+changed: [N9K1] => (item=Loopback0)
+changed: [N9K2] => (item=Loopback0)
+changed: [N9K3] => (item=Loopback0)
+changed: [N9K4] => (item=Loopback0)
+changed: [N9K5] => (item=Loopback0)
+changed: [N9K3] => (item=Loopback1)
+changed: [N9K4] => (item=Loopback1)
+changed: [N9K5] => (item=Loopback1)
+
+TASK [nxos : L3 interface configuration] *********************************************************************************************************************************************************************
+changed: [N9K4] => (item=Ethernet1/1 : 10.31.14.4/24)
+changed: [N9K2] => (item=Ethernet1/1 : 10.31.23.2/24)
+changed: [N9K3] => (item=Ethernet1/1 : 10.31.13.3/24)
+changed: [N9K1] => (item=Ethernet1/1 : 10.31.13.1/24)
+changed: [N9K5] => (item=Ethernet1/1 : 10.31.15.5/24)
+changed: [N9K4] => (item=Ethernet1/2 : 10.31.24.4/24)
+changed: [N9K2] => (item=Ethernet1/2 : 10.31.24.2/24)
+changed: [N9K5] => (item=Ethernet1/2 : 10.31.25.5/24)
+changed: [N9K3] => (item=Ethernet1/2 : 10.31.23.3/24)
+changed: [N9K1] => (item=Ethernet1/2 : 10.31.14.1/24)
+changed: [N9K4] => (item=Loopback0 : 4.4.4.4/32)
+changed: [N9K2] => (item=Ethernet1/3 : 10.31.25.2/24)
+changed: [N9K1] => (item=Ethernet1/3 : 10.31.15.1/24)
+changed: [N9K3] => (item=Loopback0 : 3.3.3.3/32)
+changed: [N9K5] => (item=Loopback0 : 5.5.5.5/32)
+changed: [N9K4] => (item=Loopback1 : 10.99.99.4/32)
+changed: [N9K2] => (item=Loopback0 : 2.2.2.2/32)
+changed: [N9K1] => (item=Loopback0 : 1.1.1.1/32)
+changed: [N9K3] => (item=Loopback1 : 10.99.99.3/32)
+changed: [N9K5] => (item=Loopback1 : 10.99.99.5/32)
+
+TASK [nxos : configure ospf domain 1] ************************************************************************************************************************************************************************
+changed: [N9K4]
+changed: [N9K1]
+changed: [N9K3]
+changed: [N9K2]
+changed: [N9K5]
+
+TASK [nxos : configure ospf interface] ***********************************************************************************************************************************************************************
+changed: [N9K3] => (item=Ethernet1/1)
+changed: [N9K2] => (item=Ethernet1/1)
+changed: [N9K4] => (item=Ethernet1/1)
+changed: [N9K1] => (item=Ethernet1/1)
+changed: [N9K5] => (item=Ethernet1/1)
+changed: [N9K3] => (item=Ethernet1/2)
+changed: [N9K2] => (item=Ethernet1/2)
+changed: [N9K4] => (item=Ethernet1/2)
+changed: [N9K1] => (item=Ethernet1/2)
+changed: [N9K5] => (item=Ethernet1/2)
+changed: [N9K3] => (item=Loopback0)
+changed: [N9K2] => (item=Ethernet1/3)
+changed: [N9K3] => (item=Loopback1)
+changed: [N9K4] => (item=Loopback0)
+changed: [N9K1] => (item=Ethernet1/3)
+changed: [N9K5] => (item=Loopback0)
+changed: [N9K2] => (item=Loopback0)
+changed: [N9K4] => (item=Loopback1)
+changed: [N9K1] => (item=Loopback0)
+changed: [N9K5] => (item=Loopback1)
+
+TASK [nxos : set nv overlay to evpn] *************************************************************************************************************************************************************************
+ok: [N9K3]
+ok: [N9K4]
+changed: [N9K2]
+changed: [N9K5]
+changed: [N9K1]
+
+TASK [nxos : create overlay VRF] *****************************************************************************************************************************************************************************
+changed: [N9K3]
+changed: [N9K2]
+changed: [N9K4]
+changed: [N9K5]
+changed: [N9K1]
+
+TASK [nxos : configure BGP] **********************************************************************************************************************************************************************************
+changed: [N9K3] => (item=3.3.3.3/32)
+changed: [N9K2] => (item=2.2.2.2/32)
+changed: [N9K4] => (item=4.4.4.4/32)
+changed: [N9K1] => (item=1.1.1.1/32)
+changed: [N9K5] => (item=5.5.5.5/32)
+
+TASK [nxos : configure ipv4 address-family to advertise evpn] ************************************************************************************************************************************************
+changed: [N9K2]
+changed: [N9K3]
+changed: [N9K5]
+changed: [N9K4]
+changed: [N9K1]
+
+PLAY [configure spines] **************************************************************************************************************************************************************************************
+
+TASK [spine : configure BGP neighbors] ***********************************************************************************************************************************************************************
+changed: [N9K1] => (item=3.3.3.3/32)
+changed: [N9K2] => (item=3.3.3.3/32)
+changed: [N9K1] => (item=4.4.4.4/32)
+changed: [N9K2] => (item=4.4.4.4/32)
+changed: [N9K1] => (item=5.5.5.5/32)
+changed: [N9K2] => (item=5.5.5.5/32)
+
+TASK [spine : configure BGP neighbors to leaves (ipv4)] ******************************************************************************************************************************************************
+changed: [N9K2] => (item=3.3.3.3/32)
+changed: [N9K1] => (item=3.3.3.3/32)
+changed: [N9K2] => (item=4.4.4.4/32)
+changed: [N9K1] => (item=4.4.4.4/32)
+changed: [N9K2] => (item=5.5.5.5/32)
+changed: [N9K1] => (item=5.5.5.5/32)
+
+TASK [spine : configure BGP neighbors to leaves (evpn)] ******************************************************************************************************************************************************
+changed: [N9K2] => (item=3.3.3.3/32)
+changed: [N9K1] => (item=3.3.3.3/32)
+changed: [N9K2] => (item=4.4.4.4/32)
+changed: [N9K1] => (item=4.4.4.4/32)
+changed: [N9K2] => (item=5.5.5.5/32)
+changed: [N9K1] => (item=5.5.5.5/32)
+
+PLAY [configure leaves] **************************************************************************************************************************************************************************************
+
+TASK [leaf : enable leaf specific features] ******************************************************************************************************************************************************************
+changed: [N9K4] => (item=hsrp)
+changed: [N9K3] => (item=hsrp)
+changed: [N9K5] => (item=hsrp)
+changed: [N9K4] => (item=interface-vlan)
+changed: [N9K3] => (item=interface-vlan)
+changed: [N9K5] => (item=interface-vlan)
+changed: [N9K4] => (item=vpc)
+changed: [N9K3] => (item=vpc)
+changed: [N9K5] => (item=vpc)
+changed: [N9K3] => (item=lacp)
+changed: [N9K4] => (item=lacp)
+changed: [N9K5] => (item=lacp)
+changed: [N9K3] => (item=nv overlay)
+changed: [N9K4] => (item=nv overlay)
+changed: [N9K3] => (item=vn-segment-vlan-based)
+changed: [N9K5] => (item=nv overlay)
+changed: [N9K4] => (item=vn-segment-vlan-based)
+changed: [N9K5] => (item=vn-segment-vlan-based)
+
+TASK [leaf : configure VTEP] *********************************************************************************************************************************************************************************
+changed: [N9K3]
+changed: [N9K4]
+changed: [N9K5]
+
+TASK [leaf : map VLANs to VNIs] ******************************************************************************************************************************************************************************
+skipping: [N9K5]
+changed: [N9K3] => (item=100)
+changed: [N9K4] => (item=100)
+changed: [N9K3] => (item=60)
+changed: [N9K4] => (item=60)
+
+TASK [leaf : configure anycast MAC] **************************************************************************************************************************************************************************
+changed: [N9K3]
+changed: [N9K5]
+changed: [N9K4]
+
+TASK [leaf : create SVIs] ************************************************************************************************************************************************************************************
+skipping: [N9K5]
+changed: [N9K3] => (item=Vlan100 10.0.0.1/24)
+changed: [N9K4] => (item=Vlan100 10.0.0.1/24)
+
+TASK [leaf : create SVI ips] *********************************************************************************************************************************************************************************
+skipping: [N9K5]
+changed: [N9K3] => (item=vlan: 100 subnet: 10.0.0.1/24)
+changed: [N9K4] => (item=vlan: 100 subnet: 10.0.0.1/24)
+
+TASK [leaf : vni evpn configuration] *************************************************************************************************************************************************************************
+skipping: [N9K5]
+changed: [N9K3] => (item=100)
+changed: [N9K4] => (item=100)
+changed: [N9K3] => (item=60)
+changed: [N9K4] => (item=60)
+
+TASK [leaf : map VNI to NVE] *********************************************************************************************************************************************************************************
+skipping: [N9K5]
+changed: [N9K3] => (item=100)
+changed: [N9K4] => (item=100)
+changed: [N9K3] => (item=60)
+changed: [N9K4] => (item=60)
+
+TASK [leaf : configure BGP neighbors] ************************************************************************************************************************************************************************
+changed: [N9K3] => (item=2.2.2.2/32)
+changed: [N9K4] => (item=2.2.2.2/32)
+changed: [N9K3] => (item=1.1.1.1/32)
+changed: [N9K4] => (item=1.1.1.1/32)
+changed: [N9K5] => (item=2.2.2.2/32)
+changed: [N9K5] => (item=1.1.1.1/32)
+
+TASK [leaf : configure BGP neighborships to spine (ipv4)] ****************************************************************************************************************************************************
+changed: [N9K4] => (item=2.2.2.2/32)
+changed: [N9K5] => (item=2.2.2.2/32)
+changed: [N9K3] => (item=2.2.2.2/32)
+changed: [N9K3] => (item=1.1.1.1/32)
+changed: [N9K4] => (item=1.1.1.1/32)
+changed: [N9K5] => (item=1.1.1.1/32)
+
+TASK [leaf : configure BGP neighborships to spine (evpn)] ****************************************************************************************************************************************************
+changed: [N9K3] => (item=2.2.2.2/32)
+changed: [N9K4] => (item=2.2.2.2/32)
+changed: [N9K5] => (item=2.2.2.2/32)
+changed: [N9K4] => (item=1.1.1.1/32)
+changed: [N9K3] => (item=1.1.1.1/32)
+changed: [N9K5] => (item=1.1.1.1/32)
+
+TASK [leaf : set interface to L2 and admin up] ***************************************************************************************************************************************************************
+skipping: [N9K5]
+ok: [N9K3] => (item={'value': 100, 'key': u'Ethernet1/5'})
+ok: [N9K4] => (item={'value': 100, 'key': u'Ethernet1/5'})
+ok: [N9K3] => (item={'value': 100, 'key': u'Ethernet1/6'})
+ok: [N9K4] => (item={'value': 60, 'key': u'Ethernet1/7'})
+ok: [N9K3] => (item={'value': 60, 'key': u'Ethernet1/7'})
+
+TASK [leaf : configure l2 switchports] ***********************************************************************************************************************************************************************
+skipping: [N9K5]
+changed: [N9K3] => (item={'value': 100, 'key': u'Ethernet1/5'})
+changed: [N9K4] => (item={'value': 100, 'key': u'Ethernet1/5'})
+changed: [N9K3] => (item={'value': 100, 'key': u'Ethernet1/6'})
+changed: [N9K4] => (item={'value': 60, 'key': u'Ethernet1/7'})
+changed: [N9K3] => (item={'value': 60, 'key': u'Ethernet1/7'})
+
+TASK [leaf : gather interface information] *******************************************************************************************************************************************************************
+ok: [N9K3]
+ok: [N9K5]
+ok: [N9K4]
+
+TASK [leaf : loopback1 bugfix] *******************************************************************************************************************************************************************************
+changed: [N9K3]
+changed: [N9K5]
+changed: [N9K4]
+
+PLAY [validate deployment] ***********************************************************************************************************************************************************************************
+
+TASK [gather nxos facts] *************************************************************************************************************************************************************************************
+ok: [N9K1]
+ok: [N9K2]
+ok: [N9K3]
+
+TASK [build loopback list] ***********************************************************************************************************************************************************************************
+ok: [N9K1] => (item=[u'2.2.2.2/32', u'1.1.1.1/32'])
+ok: [N9K1] => (item=[u'3.3.3.3/32', u'4.4.4.4/32', u'5.5.5.5/32'])
+ok: [N9K1] => (item=[])
+ok: [N9K1] => (item=[u'10.99.99.3/32', u'10.99.99.4/32', u'10.99.99.5/32'])
+ok: [N9K2] => (item=[u'2.2.2.2/32', u'1.1.1.1/32'])
+ok: [N9K2] => (item=[u'3.3.3.3/32', u'4.4.4.4/32', u'5.5.5.5/32'])
+ok: [N9K2] => (item=[])
+ok: [N9K2] => (item=[u'10.99.99.3/32', u'10.99.99.4/32', u'10.99.99.5/32'])
+ok: [N9K3] => (item=[u'2.2.2.2/32', u'1.1.1.1/32'])
+ok: [N9K3] => (item=[u'3.3.3.3/32', u'4.4.4.4/32', u'5.5.5.5/32'])
+ok: [N9K3] => (item=[])
+ok: [N9K3] => (item=[u'10.99.99.3/32', u'10.99.99.4/32', u'10.99.99.5/32'])
+
+TASK [get desired OSPF/LLDP neighbors (left)] ****************************************************************************************************************************************************************
+ok: [N9K1] => (item=N9K1 Ethernet1/1<-->Ethernet1/1 N9K3 )
+ok: [N9K1] => (item=N9K1 Ethernet1/2<-->Ethernet1/1 N9K4 )
+ok: [N9K1] => (item=N9K1 Ethernet1/3<-->Ethernet1/1 N9K5 )
+ok: [N9K2] => (item=N9K2 Ethernet1/1<-->Ethernet1/2 N9K3 )
+ok: [N9K2] => (item=N9K2 Ethernet1/2<-->Ethernet1/2 N9K4 )
+ok: [N9K2] => (item=N9K2 Ethernet1/3<-->Ethernet1/2 N9K5 )
+
+TASK [get desired OSPF/LLDP neighbors (right)] ***************************************************************************************************************************************************************
+ok: [N9K3] => (item=N9K1 Ethernet1/1<-->Ethernet1/1 N9K3 )
+ok: [N9K3] => (item=N9K2 Ethernet1/1<-->Ethernet1/2 N9K3 )
+
+TASK [set desired BGP neighbors (spine)] *********************************************************************************************************************************************************************
+skipping: [N9K3] => (item=3.3.3.3/32) 
+skipping: [N9K3] => (item=4.4.4.4/32) 
+skipping: [N9K3] => (item=5.5.5.5/32) 
+ok: [N9K1] => (item=3.3.3.3/32)
+ok: [N9K1] => (item=4.4.4.4/32)
+ok: [N9K1] => (item=5.5.5.5/32)
+ok: [N9K2] => (item=3.3.3.3/32)
+ok: [N9K2] => (item=4.4.4.4/32)
+ok: [N9K2] => (item=5.5.5.5/32)
+
+TASK [set desired BGP neighbors (leaf)] **********************************************************************************************************************************************************************
+skipping: [N9K1] => (item=2.2.2.2/32) 
+skipping: [N9K1] => (item=1.1.1.1/32) 
+skipping: [N9K2] => (item=2.2.2.2/32) 
+skipping: [N9K2] => (item=1.1.1.1/32) 
+ok: [N9K3] => (item=2.2.2.2/32)
+ok: [N9K3] => (item=1.1.1.1/32)
+
+TASK [set actual LLDP neighbors] *****************************************************************************************************************************************************************************
+ok: [N9K1] => (item=Ethernet1/1)
+ok: [N9K1] => (item=Ethernet1/2)
+ok: [N9K1] => (item=Ethernet1/3)
+skipping: [N9K1] => (item=mgmt0) 
+ok: [N9K2] => (item=Ethernet1/1)
+ok: [N9K2] => (item=Ethernet1/2)
+ok: [N9K2] => (item=Ethernet1/3)
+skipping: [N9K2] => (item=mgmt0) 
+ok: [N9K3] => (item=Ethernet1/1)
+ok: [N9K3] => (item=Ethernet1/2)
+skipping: [N9K3] => (item=mgmt0) 
+
+TASK [get actual OSPF neighbors] *****************************************************************************************************************************************************************************
+ok: [N9K3]
+ok: [N9K1]
+ok: [N9K2]
+
+TASK [set actual OSPF neighbors] *****************************************************************************************************************************************************************************
+ok: [N9K1] => (item=3.3.3.3)
+ok: [N9K1] => (item=4.4.4.4)
+ok: [N9K1] => (item=5.5.5.5)
+ok: [N9K2] => (item=3.3.3.3)
+ok: [N9K2] => (item=4.4.4.4)
+ok: [N9K2] => (item=5.5.5.5)
+ok: [N9K3] => (item=1.1.1.1)
+ok: [N9K3] => (item=2.2.2.2)
+
+TASK [get actual BGP neighbors] ******************************************************************************************************************************************************************************
+ok: [N9K1]
+ok: [N9K2]
+ok: [N9K3]
+
+TASK [set actual bgp neighbors] ******************************************************************************************************************************************************************************
+ok: [N9K1] => (item=3.3.3.3)
+ok: [N9K1] => (item=4.4.4.4)
+ok: [N9K1] => (item=5.5.5.5)
+ok: [N9K2] => (item=3.3.3.3)
+ok: [N9K2] => (item=4.4.4.4)
+ok: [N9K2] => (item=5.5.5.5)
+ok: [N9K3] => (item=1.1.1.1)
+ok: [N9K3] => (item=2.2.2.2)
+
+TASK [check LLDP neighbors] **********************************************************************************************************************************************************************************
+ok: [N9K1] => (item=Ethernet1/1) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/1", 
+        "value": {
+            "neighbor": "N9K3", 
+            "r_port": "Ethernet1/1", 
+            "remote_ip": "10.31.13.3"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K1] => (item=Ethernet1/2) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/2", 
+        "value": {
+            "neighbor": "N9K4", 
+            "r_port": "Ethernet1/1", 
+            "remote_ip": "10.31.14.4"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K1] => (item=Ethernet1/3) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/3", 
+        "value": {
+            "neighbor": "N9K5", 
+            "r_port": "Ethernet1/1", 
+            "remote_ip": "10.31.15.5"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K2] => (item=Ethernet1/1) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/1", 
+        "value": {
+            "neighbor": "N9K3", 
+            "r_port": "Ethernet1/2", 
+            "remote_ip": "10.31.23.3"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K2] => (item=Ethernet1/2) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/2", 
+        "value": {
+            "neighbor": "N9K4", 
+            "r_port": "Ethernet1/2", 
+            "remote_ip": "10.31.24.4"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K2] => (item=Ethernet1/3) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/3", 
+        "value": {
+            "neighbor": "N9K5", 
+            "r_port": "Ethernet1/2", 
+            "remote_ip": "10.31.25.5"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K3] => (item=Ethernet1/1) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/1", 
+        "value": {
+            "neighbor": "N9K1", 
+            "r_port": "Ethernet1/1", 
+            "remote_ip": "10.31.13.1"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K3] => (item=Ethernet1/2) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/2", 
+        "value": {
+            "neighbor": "N9K2", 
+            "r_port": "Ethernet1/1", 
+            "remote_ip": "10.31.23.2"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+
+TASK [check OSPF neighbors] **********************************************************************************************************************************************************************************
+ok: [N9K1] => (item=Ethernet1/1) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/1", 
+        "value": {
+            "neighbor": "N9K3", 
+            "r_port": "Ethernet1/1", 
+            "remote_ip": "10.31.13.3"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K1] => (item=Ethernet1/2) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/2", 
+        "value": {
+            "neighbor": "N9K4", 
+            "r_port": "Ethernet1/1", 
+            "remote_ip": "10.31.14.4"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K1] => (item=Ethernet1/3) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/3", 
+        "value": {
+            "neighbor": "N9K5", 
+            "r_port": "Ethernet1/1", 
+            "remote_ip": "10.31.15.5"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K2] => (item=Ethernet1/1) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/1", 
+        "value": {
+            "neighbor": "N9K3", 
+            "r_port": "Ethernet1/2", 
+            "remote_ip": "10.31.23.3"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K2] => (item=Ethernet1/2) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/2", 
+        "value": {
+            "neighbor": "N9K4", 
+            "r_port": "Ethernet1/2", 
+            "remote_ip": "10.31.24.4"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K2] => (item=Ethernet1/3) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/3", 
+        "value": {
+            "neighbor": "N9K5", 
+            "r_port": "Ethernet1/2", 
+            "remote_ip": "10.31.25.5"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K3] => (item=Ethernet1/1) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/1", 
+        "value": {
+            "neighbor": "N9K1", 
+            "r_port": "Ethernet1/1", 
+            "remote_ip": "10.31.13.1"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K3] => (item=Ethernet1/2) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/2", 
+        "value": {
+            "neighbor": "N9K2", 
+            "r_port": "Ethernet1/1", 
+            "remote_ip": "10.31.23.2"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+
+TASK [check BGP neighbors] ***********************************************************************************************************************************************************************************
+ok: [N9K1] => (item=3.3.3.3) => {
+    "changed": false, 
+    "item": {
+        "key": "3.3.3.3", 
+        "value": "Established"
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K1] => (item=4.4.4.4) => {
+    "changed": false, 
+    "item": {
+        "key": "4.4.4.4", 
+        "value": "Established"
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K1] => (item=5.5.5.5) => {
+    "changed": false, 
+    "item": {
+        "key": "5.5.5.5", 
+        "value": "Established"
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K2] => (item=3.3.3.3) => {
+    "changed": false, 
+    "item": {
+        "key": "3.3.3.3", 
+        "value": "Established"
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K2] => (item=4.4.4.4) => {
+    "changed": false, 
+    "item": {
+        "key": "4.4.4.4", 
+        "value": "Established"
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K2] => (item=5.5.5.5) => {
+    "changed": false, 
+    "item": {
+        "key": "5.5.5.5", 
+        "value": "Established"
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K3] => (item=2.2.2.2) => {
+    "changed": false, 
+    "item": {
+        "key": "2.2.2.2", 
+        "value": "Established"
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K3] => (item=1.1.1.1) => {
+    "changed": false, 
+    "item": {
+        "key": "1.1.1.1", 
+        "value": "Established"
+    }, 
+    "msg": "All assertions passed"
+}
+
+TASK [ping loopbacks] ****************************************************************************************************************************************************************************************
+ok: [N9K3] => (item=2.2.2.2)
+ok: [N9K2] => (item=2.2.2.2)
+ok: [N9K1] => (item=2.2.2.2)
+ok: [N9K1] => (item=1.1.1.1)
+ok: [N9K3] => (item=1.1.1.1)
+ok: [N9K2] => (item=1.1.1.1)
+ok: [N9K2] => (item=3.3.3.3)
+ok: [N9K1] => (item=3.3.3.3)
+ok: [N9K3] => (item=3.3.3.3)
+ok: [N9K2] => (item=4.4.4.4)
+ok: [N9K3] => (item=4.4.4.4)
+ok: [N9K1] => (item=4.4.4.4)
+ok: [N9K2] => (item=5.5.5.5)
+ok: [N9K3] => (item=5.5.5.5)
+ok: [N9K1] => (item=5.5.5.5)
+ok: [N9K2] => (item=10.99.99.3)
+ok: [N9K3] => (item=10.99.99.3)
+ok: [N9K1] => (item=10.99.99.3)
+ok: [N9K2] => (item=10.99.99.4)
+ok: [N9K3] => (item=10.99.99.4)
+ok: [N9K1] => (item=10.99.99.4)
+ok: [N9K2] => (item=10.99.99.5)
+ok: [N9K3] => (item=10.99.99.5)
+ok: [N9K1] => (item=10.99.99.5)
+
+PLAY [validate deployment] ***********************************************************************************************************************************************************************************
+
+TASK [gather nxos facts] *************************************************************************************************************************************************************************************
+ok: [N9K4]
+ok: [N9K5]
+
+TASK [build loopback list] ***********************************************************************************************************************************************************************************
+ok: [N9K4] => (item=[u'2.2.2.2/32', u'1.1.1.1/32'])
+ok: [N9K4] => (item=[u'3.3.3.3/32', u'4.4.4.4/32', u'5.5.5.5/32'])
+ok: [N9K4] => (item=[])
+ok: [N9K4] => (item=[u'10.99.99.3/32', u'10.99.99.4/32', u'10.99.99.5/32'])
+ok: [N9K5] => (item=[u'2.2.2.2/32', u'1.1.1.1/32'])
+ok: [N9K5] => (item=[u'3.3.3.3/32', u'4.4.4.4/32', u'5.5.5.5/32'])
+ok: [N9K5] => (item=[])
+ok: [N9K5] => (item=[u'10.99.99.3/32', u'10.99.99.4/32', u'10.99.99.5/32'])
+
+TASK [get desired OSPF/LLDP neighbors (left)] ****************************************************************************************************************************************************************
+
+TASK [get desired OSPF/LLDP neighbors (right)] ***************************************************************************************************************************************************************
+ok: [N9K4] => (item=N9K1 Ethernet1/2<-->Ethernet1/1 N9K4 )
+ok: [N9K4] => (item=N9K2 Ethernet1/2<-->Ethernet1/2 N9K4 )
+ok: [N9K5] => (item=N9K1 Ethernet1/3<-->Ethernet1/1 N9K5 )
+ok: [N9K5] => (item=N9K2 Ethernet1/3<-->Ethernet1/2 N9K5 )
+
+TASK [set desired BGP neighbors (spine)] *********************************************************************************************************************************************************************
+skipping: [N9K4] => (item=3.3.3.3/32) 
+skipping: [N9K4] => (item=4.4.4.4/32) 
+skipping: [N9K4] => (item=5.5.5.5/32) 
+skipping: [N9K5] => (item=3.3.3.3/32) 
+skipping: [N9K5] => (item=4.4.4.4/32) 
+skipping: [N9K5] => (item=5.5.5.5/32) 
+
+TASK [set desired BGP neighbors (leaf)] **********************************************************************************************************************************************************************
+ok: [N9K4] => (item=2.2.2.2/32)
+ok: [N9K4] => (item=1.1.1.1/32)
+ok: [N9K5] => (item=2.2.2.2/32)
+ok: [N9K5] => (item=1.1.1.1/32)
+
+TASK [set actual LLDP neighbors] *****************************************************************************************************************************************************************************
+ok: [N9K4] => (item=Ethernet1/1)
+ok: [N9K4] => (item=Ethernet1/2)
+skipping: [N9K4] => (item=mgmt0) 
+ok: [N9K5] => (item=Ethernet1/1)
+ok: [N9K5] => (item=Ethernet1/2)
+skipping: [N9K5] => (item=mgmt0) 
+
+TASK [get actual OSPF neighbors] *****************************************************************************************************************************************************************************
+ok: [N9K5]
+ok: [N9K4]
+
+TASK [set actual OSPF neighbors] *****************************************************************************************************************************************************************************
+ok: [N9K4] => (item=1.1.1.1)
+ok: [N9K4] => (item=2.2.2.2)
+ok: [N9K5] => (item=1.1.1.1)
+ok: [N9K5] => (item=2.2.2.2)
+
+TASK [get actual BGP neighbors] ******************************************************************************************************************************************************************************
+ok: [N9K5]
+ok: [N9K4]
+
+TASK [set actual bgp neighbors] ******************************************************************************************************************************************************************************
+ok: [N9K4] => (item=1.1.1.1)
+ok: [N9K4] => (item=2.2.2.2)
+ok: [N9K5] => (item=1.1.1.1)
+ok: [N9K5] => (item=2.2.2.2)
+
+TASK [check LLDP neighbors] **********************************************************************************************************************************************************************************
+ok: [N9K4] => (item=Ethernet1/1) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/1", 
+        "value": {
+            "neighbor": "N9K1", 
+            "r_port": "Ethernet1/2", 
+            "remote_ip": "10.31.14.1"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K4] => (item=Ethernet1/2) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/2", 
+        "value": {
+            "neighbor": "N9K2", 
+            "r_port": "Ethernet1/2", 
+            "remote_ip": "10.31.24.2"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K5] => (item=Ethernet1/1) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/1", 
+        "value": {
+            "neighbor": "N9K1", 
+            "r_port": "Ethernet1/3", 
+            "remote_ip": "10.31.15.1"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K5] => (item=Ethernet1/2) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/2", 
+        "value": {
+            "neighbor": "N9K2", 
+            "r_port": "Ethernet1/3", 
+            "remote_ip": "10.31.25.2"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+
+TASK [check OSPF neighbors] **********************************************************************************************************************************************************************************
+ok: [N9K4] => (item=Ethernet1/1) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/1", 
+        "value": {
+            "neighbor": "N9K1", 
+            "r_port": "Ethernet1/2", 
+            "remote_ip": "10.31.14.1"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K4] => (item=Ethernet1/2) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/2", 
+        "value": {
+            "neighbor": "N9K2", 
+            "r_port": "Ethernet1/2", 
+            "remote_ip": "10.31.24.2"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K5] => (item=Ethernet1/1) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/1", 
+        "value": {
+            "neighbor": "N9K1", 
+            "r_port": "Ethernet1/3", 
+            "remote_ip": "10.31.15.1"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K5] => (item=Ethernet1/2) => {
+    "changed": false, 
+    "item": {
+        "key": "Ethernet1/2", 
+        "value": {
+            "neighbor": "N9K2", 
+            "r_port": "Ethernet1/3", 
+            "remote_ip": "10.31.25.2"
+        }
+    }, 
+    "msg": "All assertions passed"
+}
+
+TASK [check BGP neighbors] ***********************************************************************************************************************************************************************************
+ok: [N9K4] => (item=2.2.2.2) => {
+    "changed": false, 
+    "item": {
+        "key": "2.2.2.2", 
+        "value": "Established"
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K4] => (item=1.1.1.1) => {
+    "changed": false, 
+    "item": {
+        "key": "1.1.1.1", 
+        "value": "Established"
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K5] => (item=2.2.2.2) => {
+    "changed": false, 
+    "item": {
+        "key": "2.2.2.2", 
+        "value": "Established"
+    }, 
+    "msg": "All assertions passed"
+}
+ok: [N9K5] => (item=1.1.1.1) => {
+    "changed": false, 
+    "item": {
+        "key": "1.1.1.1", 
+        "value": "Established"
+    }, 
+    "msg": "All assertions passed"
+}
+
+TASK [ping loopbacks] ****************************************************************************************************************************************************************************************
+ok: [N9K4] => (item=2.2.2.2)
+ok: [N9K5] => (item=2.2.2.2)
+ok: [N9K4] => (item=1.1.1.1)
+ok: [N9K5] => (item=1.1.1.1)
+ok: [N9K4] => (item=3.3.3.3)
+ok: [N9K5] => (item=3.3.3.3)
+ok: [N9K4] => (item=4.4.4.4)
+ok: [N9K5] => (item=4.4.4.4)
+ok: [N9K4] => (item=5.5.5.5)
+ok: [N9K5] => (item=5.5.5.5)
+ok: [N9K4] => (item=10.99.99.3)
+ok: [N9K5] => (item=10.99.99.3)
+ok: [N9K4] => (item=10.99.99.4)
+ok: [N9K5] => (item=10.99.99.4)
+ok: [N9K4] => (item=10.99.99.5)
+ok: [N9K5] => (item=10.99.99.5)
+
+PLAY RECAP ***************************************************************************************************************************************************************************************************
+N9K1                       : ok=31   changed=15   unreachable=0    failed=0   
+N9K2                       : ok=31   changed=15   unreachable=0    failed=0   
+N9K3                       : ok=43   changed=24   unreachable=0    failed=0   
+N9K4                       : ok=43   changed=24   unreachable=0    failed=0   
+N9K5                       : ok=36   changed=19   unreachable=0    failed=0   
+
